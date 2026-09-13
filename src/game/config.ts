@@ -2,6 +2,7 @@ import { AUTO, Scale, Types } from 'phaser';
 import { BootScene } from './scenes/BootScene';
 import { ArabiaMapScene } from './scenes/ArabiaMapScene';
 import { ZamzamScene } from './scenes/ZamzamScene';
+import { DarAlNadwahScene } from './scenes/DarAlNadwahScene';
 
 export const createPhaserConfig = (parent: HTMLElement): Types.Core.GameConfig => ({
   type: AUTO,
@@ -20,5 +21,5 @@ export const createPhaserConfig = (parent: HTMLElement): Types.Core.GameConfig =
       debug: false,
     },
   },
-  scene: [BootScene, ArabiaMapScene, ZamzamScene],
+  scene: [BootScene, ArabiaMapScene, ZamzamScene, DarAlNadwahScene],
 });

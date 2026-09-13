@@ -1,8 +1,9 @@
 import { Scene, Math as PMath, GameObjects } from 'phaser';
-import { EventBus, GAME_EVENTS, currentAppLanguage } from '../EventBus';
-import { CHAPTER_1_DATA, LocationPoint } from '../../data/chapter1Data';
+import { EventBus, GAME_EVENTS, currentAppLanguage, currentAppSection } from '../EventBus';
+import { CHAPTER_1_DATA, CHAPTER_1_SECTION_2_DATA, LocationPoint } from '../../data/chapter1Data';
 
 export class ArabiaMapScene extends Scene {
+  private currentSection: '1.1' | '1.2' = currentAppSection;
   private caravanPathPoints: { x: number; y: number }[] = [];
   private caravanIndex = 0;
   private caravanSprite?: GameObjects.Sprite;
@@ -16,6 +17,7 @@ export class ArabiaMapScene extends Scene {
   }
 
   create() {
+    this.currentSection = currentAppSection;
     const width = this.cameras.main.width;
     const height = this.cameras.main.height;
 
@@ -43,8 +45,9 @@ export class ArabiaMapScene extends Scene {
     // Apply current language
     this.updateLanguageStrings(currentAppLanguage);
 
-    // Notify React that the scene is loaded
+    // Notify React that the scene is loaded and active
     EventBus.emit(GAME_EVENTS.SCENE_READY, this);
+    EventBus.emit(GAME_EVENTS.SCENE_CHANGED, 'ArabiaMapScene');
 
     // Event listeners
     const onSwitchScene = (targetScene: string) => {
@@ -57,14 +60,33 @@ export class ArabiaMapScene extends Scene {
       this.updateLanguageStrings(lang);
     };
 
+    const onSwitchSection = (sec: '1.1' | '1.2') => {
+      if (this.currentSection !== sec) {
+        this.currentSection = sec;
+        this.refreshMarkers();
+      }
+    };
+
     EventBus.on(GAME_EVENTS.SWITCH_SCENE, onSwitchScene);
     EventBus.on(GAME_EVENTS.LANGUAGE_CHANGED, onLanguageChanged);
+    EventBus.on(GAME_EVENTS.SWITCH_SECTION, onSwitchSection);
 
     // Cleanup on scene shutdown or destroy
     this.events.once('shutdown', () => {
       EventBus.removeListener(GAME_EVENTS.SWITCH_SCENE, onSwitchScene);
       EventBus.removeListener(GAME_EVENTS.LANGUAGE_CHANGED, onLanguageChanged);
+      EventBus.removeListener(GAME_EVENTS.SWITCH_SECTION, onSwitchSection);
     });
+  }
+
+  private refreshMarkers() {
+    this.markers.forEach((m) => m.destroy());
+    this.markers = [];
+    this.markerLabels = [];
+    const w = this.cameras.main.width;
+    const h = this.cameras.main.height;
+    this.placeLocationMarkers(w, h);
+    this.updateLanguageStrings(currentAppLanguage);
   }
 
   private updateLanguageStrings(lang: 'bn' | 'en') {
@@ -83,11 +105,19 @@ export class ArabiaMapScene extends Scene {
     }
 
     if (this.titleLabel && this.titleLabel.active && this.titleLabel.scene) {
-      this.titleLabel.setText(
-        isBn
-          ? 'جَزِيرَةُ الْعَرَبِ\nআরব উপদ্বীপ'
-          : 'جَزِيرَةُ الْعَرَبِ\nARABIAN PENINSULA'
-      );
+      if (this.currentSection === '1.2') {
+        this.titleLabel.setText(
+          isBn
+            ? 'مَمَالِكُ الْعَرَبِ\nপ্রাচীন আরব রাজ্য ও সীমানা'
+            : 'مَمَالِكُ الْعَرَبِ\nANCIENT ARAB KINGDOMS'
+        );
+      } else {
+        this.titleLabel.setText(
+          isBn
+            ? 'جَزِيرَةُ الْعَرَبِ\nআরব উপদ্বীপ'
+            : 'جَزِيرَةُ الْعَرَبِ\nARABIAN PENINSULA'
+        );
+      }
     }
   }
 
@@ -179,7 +209,12 @@ export class ArabiaMapScene extends Scene {
   }
 
   private placeLocationMarkers(w: number, h: number) {
-    CHAPTER_1_DATA.locations.forEach((loc: LocationPoint) => {
+    const activeLocations =
+      this.currentSection === '1.2'
+        ? CHAPTER_1_SECTION_2_DATA.locations
+        : CHAPTER_1_DATA.locations;
+
+    activeLocations.forEach((loc: LocationPoint) => {
       const posX = (loc.x / 100) * w;
       const posY = (loc.y / 100) * h;
 

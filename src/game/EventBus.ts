@@ -36,17 +36,26 @@ class SimpleEventEmitter {
 export const EventBus = new SimpleEventEmitter();
 
 export let currentAppLanguage: 'bn' | 'en' = 'bn';
+export let currentAppSection: '1.1' | '1.2' = '1.1';
 
 export const setAppLanguage = (lang: 'bn' | 'en') => {
   currentAppLanguage = lang;
   EventBus.emit(GAME_EVENTS.LANGUAGE_CHANGED, lang);
 };
 
+export const setAppSection = (sec: '1.1' | '1.2') => {
+  currentAppSection = sec;
+  EventBus.emit(GAME_EVENTS.SWITCH_SECTION, sec);
+};
+
 export const GAME_EVENTS = {
   LOCATION_SELECTED: 'LOCATION_SELECTED',
+  PORTFOLIO_SELECTED: 'PORTFOLIO_SELECTED',
   SCENE_READY: 'SCENE_READY',
+  SCENE_CHANGED: 'SCENE_CHANGED',
   JOURNAL_UPDATED: 'JOURNAL_UPDATED',
   SWITCH_SCENE: 'SWITCH_SCENE',
+  SWITCH_SECTION: 'SWITCH_SECTION',
   CELEBRATE: 'CELEBRATE',
   LANGUAGE_CHANGED: 'LANGUAGE_CHANGED',
 };

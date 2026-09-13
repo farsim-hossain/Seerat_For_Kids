@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X, HelpCircle, CheckCircle2, AlertCircle, Award, RotateCcw } from 'lucide-react';
 import { CHAPTER_1_DATA, QuizQuestion } from '../data/chapter1Data';
 import confetti from 'canvas-confetti';
@@ -10,6 +10,9 @@ interface QuizModalProps {
   onClose: () => void;
   onQuizCompleted: (score: number) => void;
   lang: 'bn' | 'en';
+  quizzes?: QuizQuestion[];
+  titleBn?: string;
+  titleEn?: string;
 }
 
 export default function QuizModal({
@@ -17,18 +20,32 @@ export default function QuizModal({
   onClose,
   onQuizCompleted,
   lang,
+  quizzes,
+  titleBn,
+  titleEn,
 }: QuizModalProps) {
+  const activeQuestions = quizzes || CHAPTER_1_DATA.quizzes;
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [isAnswerSubmitted, setIsAnswerSubmitted] = useState(false);
   const [score, setScore] = useState(0);
   const [isCompleted, setIsCompleted] = useState(false);
 
+  useEffect(() => {
+    if (isOpen) {
+      setCurrentIndex(0);
+      setSelectedOption(null);
+      setIsAnswerSubmitted(false);
+      setScore(0);
+      setIsCompleted(false);
+    }
+  }, [isOpen, quizzes]);
+
   if (!isOpen) return null;
 
   const isBn = lang === 'bn';
-  const currentQ: QuizQuestion = CHAPTER_1_DATA.quizzes[currentIndex];
-  const isLastQuestion = currentIndex === CHAPTER_1_DATA.quizzes.length - 1;
+  const currentQ: QuizQuestion = activeQuestions[currentIndex] || activeQuestions[0];
+  const isLastQuestion = currentIndex === activeQuestions.length - 1;
 
   const handleSelectOption = (idx: number) => {
     if (isAnswerSubmitted) return;
@@ -89,12 +106,14 @@ export default function QuizModal({
               </div>
               <div>
                 <h2 className="text-xl font-bold text-amber-950 font-bengali">
-                  {isBn ? 'জ্ঞান যাচাই ও চ্যালেঞ্জ' : 'Knowledge Checkpoint Quiz'}
+                  {titleBn && titleEn
+                    ? (isBn ? titleBn : titleEn)
+                    : (isBn ? 'জ্ঞান যাচাই ও চ্যালেঞ্জ' : 'Knowledge Checkpoint Quiz')}
                 </h2>
                 <div className="text-xs font-semibold text-amber-700 uppercase tracking-wide">
                   {isBn
-                    ? `প্রশ্ন ${currentIndex + 1} / ${CHAPTER_1_DATA.quizzes.length}`
-                    : `Question ${currentIndex + 1} of ${CHAPTER_1_DATA.quizzes.length}`}
+                    ? `প্রশ্ন ${currentIndex + 1} / ${activeQuestions.length}`
+                    : `Question ${currentIndex + 1} of ${activeQuestions.length}`}
                 </div>
               </div>
             </div>
@@ -191,8 +210,8 @@ export default function QuizModal({
             </h3>
             <p className="text-sm text-slate-600 mb-6">
               {isBn
-                ? `তুমি ${CHAPTER_1_DATA.quizzes.length} টির মধ্যে ${score} টি সঠিক উত্তর দিয়েছ।`
-                : `You scored ${score} out of ${CHAPTER_1_DATA.quizzes.length} correct.`}
+                ? `তুমি ${activeQuestions.length} টির মধ্যে ${score} টি সঠিক উত্তর দিয়েছ।`
+                : `You scored ${score} out of ${activeQuestions.length} correct.`}
             </p>
 
             <div className="bg-white/90 border border-amber-200 p-4 rounded-2xl max-w-xs mx-auto mb-6 shadow-sm">
@@ -200,7 +219,7 @@ export default function QuizModal({
                 {isBn ? 'তোমার অর্জিত স্কোর' : 'Knowledge Mastery'}
               </div>
               <div className="text-4xl font-black text-amber-600 my-1">
-                {Math.round((score / CHAPTER_1_DATA.quizzes.length) * 100)}%
+                {Math.round((score / activeQuestions.length) * 100)}%
               </div>
               <div className="text-xs text-slate-500">
                 {isBn ? 'সীরাহ জার্নালে স্কোর যুক্ত হয়েছে' : 'Score added to your Seerah Journal'}

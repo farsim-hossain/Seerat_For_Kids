@@ -67,7 +67,7 @@ export class ZamzamScene extends Scene {
     }).setOrigin(0.5).setInteractive({ cursor: 'pointer' });
 
     this.backBtn.on('pointerdown', () => {
-      this.scene.start('ArabiaMapScene');
+      EventBus.emit(GAME_EVENTS.SWITCH_SCENE, 'ArabiaMapScene');
     });
 
     // Zamzam interaction spot
@@ -100,15 +100,26 @@ export class ZamzamScene extends Scene {
     // Set initial strings
     this.updateLanguageStrings(currentAppLanguage);
 
-    // Language listener
+    // Notify React that ZamzamScene is active
+    EventBus.emit(GAME_EVENTS.SCENE_CHANGED, 'ZamzamScene');
+
+    // Language & Switch Scene listeners
     const onLanguageChanged = (lang: 'bn' | 'en') => {
       this.updateLanguageStrings(lang);
     };
 
+    const onSwitchScene = (targetScene: string) => {
+      if (this.scene.isActive() && targetScene !== 'ZamzamScene') {
+        this.scene.start(targetScene);
+      }
+    };
+
     EventBus.on(GAME_EVENTS.LANGUAGE_CHANGED, onLanguageChanged);
+    EventBus.on(GAME_EVENTS.SWITCH_SCENE, onSwitchScene);
 
     this.events.once('shutdown', () => {
       EventBus.removeListener(GAME_EVENTS.LANGUAGE_CHANGED, onLanguageChanged);
+      EventBus.removeListener(GAME_EVENTS.SWITCH_SCENE, onSwitchScene);
     });
   }
 

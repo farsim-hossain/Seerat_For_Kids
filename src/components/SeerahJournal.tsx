@@ -1,7 +1,7 @@
 'use client';
 
 import { X, MapPin, Award, BookMarked, Sparkles, CheckCircle2 } from 'lucide-react';
-import { LocationPoint, CHAPTER_1_DATA } from '../data/chapter1Data';
+import { LocationPoint, CHAPTER_1_DATA, CHAPTER_1_SECTION_2_DATA } from '../data/chapter1Data';
 
 interface SeerahJournalProps {
   isOpen: boolean;
@@ -25,12 +25,15 @@ export default function SeerahJournal({
   if (!isOpen) return null;
 
   const isBn = lang === 'bn';
-  const totalLocations = CHAPTER_1_DATA.locations.length;
+  const totalLocations = CHAPTER_1_DATA.locations.length + CHAPTER_1_SECTION_2_DATA.locations.length;
   const totalTribes = CHAPTER_1_DATA.tribes.length;
-  const progressPercent = Math.round(
-    ((discoveredLocations.length + tribesLearned.length + (quizPassed ? 1 : 0)) /
-      (totalLocations + totalTribes + 1)) *
-      100
+  const progressPercent = Math.min(
+    100,
+    Math.round(
+      ((discoveredLocations.length + tribesLearned.length + (quizPassed ? 2 : 0)) /
+        (totalLocations + totalTribes + 2)) *
+        100
+    )
   );
 
   return (
@@ -132,19 +135,35 @@ export default function SeerahJournal({
             )}
           </div>
 
-          {/* Moral Lesson Card */}
-          <div className="bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-300 p-4 rounded-2xl shadow-sm mb-4">
-            <div className="text-xs font-bold text-emerald-800 uppercase tracking-wider mb-1">
-              🌟 {isBn ? 'অর্জিত প্রধান চারিত্রিক শিক্ষা' : 'Core Moral & Character Trait'}
+          {/* Moral Lesson Cards */}
+          <div className="space-y-3 mb-4">
+            <div className="bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-300 p-3.5 rounded-2xl shadow-sm">
+              <div className="text-[11px] font-bold text-emerald-800 uppercase tracking-wider mb-1">
+                🌟 {isBn ? 'পর্ব ১.১ এর শিক্ষা: তাওয়াক্কুল (আল্লাহর ওপর ভরসা)' : 'Part 1.1: Tawakkul (Trust in Allah)'}
+              </div>
+              <div className="text-sm font-extrabold text-emerald-950 mb-1 font-bengali">
+                {isBn ? CHAPTER_1_DATA.moralLesson.traitBn : CHAPTER_1_DATA.moralLesson.traitEn}
+              </div>
+              <p className="text-xs text-emerald-900 leading-relaxed">
+                {isBn
+                  ? CHAPTER_1_DATA.moralLesson.storyContextBn
+                  : CHAPTER_1_DATA.moralLesson.storyContextEn}
+              </p>
             </div>
-            <div className="text-base font-extrabold text-emerald-950 mb-1 font-bengali">
-              {isBn ? CHAPTER_1_DATA.moralLesson.traitBn : CHAPTER_1_DATA.moralLesson.traitEn}
+
+            <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-300 p-3.5 rounded-2xl shadow-sm">
+              <div className="text-[11px] font-bold text-amber-800 uppercase tracking-wider mb-1">
+                👑 {isBn ? 'পর্ব ১.২ এর শিক্ষা: আমানতদারী ও সেবামূলক নেতৃত্ব' : 'Part 1.2: Servant Leadership & Trust'}
+              </div>
+              <div className="text-sm font-extrabold text-amber-950 mb-1 font-bengali">
+                {isBn ? CHAPTER_1_SECTION_2_DATA.moralLesson.traitBn : CHAPTER_1_SECTION_2_DATA.moralLesson.traitEn}
+              </div>
+              <p className="text-xs text-amber-900 leading-relaxed">
+                {isBn
+                  ? CHAPTER_1_SECTION_2_DATA.moralLesson.storyContextBn
+                  : CHAPTER_1_SECTION_2_DATA.moralLesson.storyContextEn}
+              </p>
             </div>
-            <p className="text-xs text-emerald-900 leading-relaxed">
-              {isBn
-                ? CHAPTER_1_DATA.moralLesson.storyContextBn
-                : CHAPTER_1_DATA.moralLesson.storyContextEn}
-            </p>
           </div>
         </div>
 

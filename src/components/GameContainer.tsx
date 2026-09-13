@@ -2,6 +2,8 @@
 
 import { useEffect, useRef } from 'react';
 
+import { EventBus, GAME_EVENTS } from '../game/EventBus';
+
 interface GameContainerProps {
   onSceneReady?: () => void;
 }
@@ -31,10 +33,26 @@ export default function GameContainer({ onSceneReady }: GameContainerProps) {
       }
     }
 
+    const handleSwitchScene = (targetScene: string) => {
+      if (gameRef.current && gameRef.current.scene) {
+        const sceneManager = gameRef.current.scene;
+        const activeScenes = sceneManager.getScenes(true);
+        activeScenes.forEach((s: any) => {
+          if (s.scene.key !== targetScene) {
+            s.scene.stop();
+          }
+        });
+        sceneManager.start(targetScene);
+      }
+    };
+
+    EventBus.on(GAME_EVENTS.SWITCH_SCENE, handleSwitchScene);
+
     initPhaser();
 
     return () => {
       isMounted = false;
+      EventBus.removeListener(GAME_EVENTS.SWITCH_SCENE, handleSwitchScene);
       if (gameRef.current) {
         gameRef.current.destroy(true);
         gameRef.current = null;
