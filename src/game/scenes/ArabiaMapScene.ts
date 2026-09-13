@@ -50,12 +50,6 @@ export class ArabiaMapScene extends Scene {
     EventBus.emit(GAME_EVENTS.SCENE_CHANGED, 'ArabiaMapScene');
 
     // Event listeners
-    const onSwitchScene = (targetScene: string) => {
-      if (this.scene.isActive()) {
-        this.scene.start(targetScene);
-      }
-    };
-
     const onLanguageChanged = (lang: 'bn' | 'en') => {
       this.updateLanguageStrings(lang);
     };
@@ -67,16 +61,16 @@ export class ArabiaMapScene extends Scene {
       }
     };
 
-    EventBus.on(GAME_EVENTS.SWITCH_SCENE, onSwitchScene);
     EventBus.on(GAME_EVENTS.LANGUAGE_CHANGED, onLanguageChanged);
     EventBus.on(GAME_EVENTS.SWITCH_SECTION, onSwitchSection);
 
     // Cleanup on scene shutdown or destroy
-    this.events.once('shutdown', () => {
-      EventBus.removeListener(GAME_EVENTS.SWITCH_SCENE, onSwitchScene);
+    const cleanup = () => {
       EventBus.removeListener(GAME_EVENTS.LANGUAGE_CHANGED, onLanguageChanged);
       EventBus.removeListener(GAME_EVENTS.SWITCH_SECTION, onSwitchSection);
-    });
+    };
+    this.events.once('shutdown', cleanup);
+    this.events.once('destroy', cleanup);
   }
 
   private refreshMarkers() {

@@ -103,24 +103,18 @@ export class ZamzamScene extends Scene {
     // Notify React that ZamzamScene is active
     EventBus.emit(GAME_EVENTS.SCENE_CHANGED, 'ZamzamScene');
 
-    // Language & Switch Scene listeners
+    // Language listener
     const onLanguageChanged = (lang: 'bn' | 'en') => {
       this.updateLanguageStrings(lang);
     };
 
-    const onSwitchScene = (targetScene: string) => {
-      if (this.scene.isActive() && targetScene !== 'ZamzamScene') {
-        this.scene.start(targetScene);
-      }
-    };
-
     EventBus.on(GAME_EVENTS.LANGUAGE_CHANGED, onLanguageChanged);
-    EventBus.on(GAME_EVENTS.SWITCH_SCENE, onSwitchScene);
 
-    this.events.once('shutdown', () => {
+    const cleanup = () => {
       EventBus.removeListener(GAME_EVENTS.LANGUAGE_CHANGED, onLanguageChanged);
-      EventBus.removeListener(GAME_EVENTS.SWITCH_SCENE, onSwitchScene);
-    });
+    };
+    this.events.once('shutdown', cleanup);
+    this.events.once('destroy', cleanup);
   }
 
   private updateLanguageStrings(lang: 'bn' | 'en') {

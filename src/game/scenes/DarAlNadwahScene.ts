@@ -182,24 +182,18 @@ export class DarAlNadwahScene extends Scene {
     // Notify React that DarAlNadwahScene is active
     EventBus.emit(GAME_EVENTS.SCENE_CHANGED, 'DarAlNadwahScene');
 
-    // Event listener for language toggle & switch scene
+    // Event listener for language toggle
     const handleLanguageChange = (lang: 'bn' | 'en') => {
       this.updateLanguage(lang);
     };
 
-    const handleSwitchScene = (targetScene: string) => {
-      if (this.scene.isActive() && targetScene !== 'DarAlNadwahScene') {
-        this.scene.start(targetScene);
-      }
-    };
-
     EventBus.on(GAME_EVENTS.LANGUAGE_CHANGED, handleLanguageChange);
-    EventBus.on(GAME_EVENTS.SWITCH_SCENE, handleSwitchScene);
 
-    this.events.once('shutdown', () => {
+    const cleanup = () => {
       EventBus.removeListener(GAME_EVENTS.LANGUAGE_CHANGED, handleLanguageChange);
-      EventBus.removeListener(GAME_EVENTS.SWITCH_SCENE, handleSwitchScene);
-    });
+    };
+    this.events.once('shutdown', cleanup);
+    this.events.once('destroy', cleanup);
 
     EventBus.emit(GAME_EVENTS.SCENE_READY, 'DarAlNadwahScene');
   }

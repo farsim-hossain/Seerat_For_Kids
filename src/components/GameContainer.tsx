@@ -11,6 +11,7 @@ interface GameContainerProps {
 export default function GameContainer({ onSceneReady }: GameContainerProps) {
   const gameRef = useRef<any>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const pendingSceneRef = useRef<string | null>(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -30,19 +31,44 @@ export default function GameContainer({ onSceneReady }: GameContainerProps) {
         const config = createPhaserConfig(containerRef.current);
         gameRef.current = new Game(config);
         onSceneReady?.();
+
+        if (pendingSceneRef.current && pendingSceneRef.current !== 'ArabiaMapScene') {
+          const target = pendingSceneRef.current;
+          pendingSceneRef.current = null;
+          setTimeout(() => {
+            if (gameRef.current?.scene) {
+              const sm = gameRef.current.scene;
+              sm.getScenes(true).forEach((s: any) => {
+                if (s?.scene?.key !== target) {
+                  sm.stop(s.scene.key);
+                }
+              });
+              sm.start(target);
+            }
+          }, 150);
+        }
       }
     }
 
     const handleSwitchScene = (targetScene: string) => {
-      if (gameRef.current && gameRef.current.scene) {
+      if (!gameRef.current || !gameRef.current.scene) {
+        pendingSceneRef.current = targetScene;
+        return;
+      }
+
+      try {
         const sceneManager = gameRef.current.scene;
+        if (sceneManager.isActive(targetScene)) return;
+
         const activeScenes = sceneManager.getScenes(true);
         activeScenes.forEach((s: any) => {
-          if (s.scene.key !== targetScene) {
-            s.scene.stop();
+          if (s && s.scene && s.scene.key !== targetScene) {
+            sceneManager.stop(s.scene.key);
           }
         });
         sceneManager.start(targetScene);
+      } catch (err) {
+        console.error('Error switching scene in Phaser:', err);
       }
     };
 
@@ -54,7 +80,11 @@ export default function GameContainer({ onSceneReady }: GameContainerProps) {
       isMounted = false;
       EventBus.removeListener(GAME_EVENTS.SWITCH_SCENE, handleSwitchScene);
       if (gameRef.current) {
-        gameRef.current.destroy(true);
+        try {
+          gameRef.current.destroy(true);
+        } catch (e) {
+          // ignore cleanup errors on unmount
+        }
         gameRef.current = null;
       }
     };

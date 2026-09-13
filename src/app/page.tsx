@@ -17,6 +17,7 @@ import {
   Landmark,
   Home,
   CheckCircle2,
+  Puzzle,
 } from 'lucide-react';
 import {
   CHAPTER_1_DATA,
@@ -31,6 +32,7 @@ import SeerahJournal from '../components/SeerahJournal';
 import LineageTreeModal from '../components/LineageTreeModal';
 import DarAlNadwahModal from '../components/DarAlNadwahModal';
 import QuizModal from '../components/QuizModal';
+import PuzzleModal from '../components/PuzzleModal';
 import confetti from 'canvas-confetti';
 
 // Dynamic import with SSR disabled for Phaser canvas
@@ -69,9 +71,12 @@ export default function HomePage() {
   const [isDarAlNadwahOpen, setIsDarAlNadwahOpen] = useState(false);
   const [selectedPortfolioId, setSelectedPortfolioId] = useState<string | null>(null);
   const [isQuizOpen, setIsQuizOpen] = useState(false);
+  const [isPuzzleOpen, setIsPuzzleOpen] = useState(false);
 
   // Active scene mode in Phaser
-  const [currentScene, setCurrentScene] = useState<'ArabiaMapScene' | 'ZamzamScene' | 'DarAlNadwahScene'>('ArabiaMapScene');
+  const [currentScene, setCurrentScene] = useState<
+    'ArabiaMapScene' | 'ZamzamScene' | 'DarAlNadwahScene' | 'MakkahJourneyScene'
+  >('ArabiaMapScene');
   const [audioMuted, setAudioMuted] = useState(false);
 
   const isBn = lang === 'bn';
@@ -95,7 +100,9 @@ export default function HomePage() {
       });
     };
 
-    const handleSceneChanged = (sceneName: 'ArabiaMapScene' | 'ZamzamScene' | 'DarAlNadwahScene') => {
+    const handleSceneChanged = (
+      sceneName: 'ArabiaMapScene' | 'ZamzamScene' | 'DarAlNadwahScene' | 'MakkahJourneyScene'
+    ) => {
       setCurrentScene(sceneName);
     };
 
@@ -130,7 +137,9 @@ export default function HomePage() {
     }
   };
 
-  const handleSwitchScene = (sceneName: 'ArabiaMapScene' | 'ZamzamScene' | 'DarAlNadwahScene') => {
+  const handleSwitchScene = (
+    sceneName: 'ArabiaMapScene' | 'ZamzamScene' | 'DarAlNadwahScene' | 'MakkahJourneyScene'
+  ) => {
     setCurrentScene(sceneName);
     EventBus.emit(GAME_EVENTS.SWITCH_SCENE, sceneName);
   };
@@ -143,7 +152,10 @@ export default function HomePage() {
     if (sectionId === '1.1' && currentScene === 'DarAlNadwahScene') {
       setCurrentScene('ArabiaMapScene');
       EventBus.emit(GAME_EVENTS.SWITCH_SCENE, 'ArabiaMapScene');
-    } else if (sectionId === '1.2' && currentScene === 'ZamzamScene') {
+    } else if (
+      sectionId === '1.2' &&
+      (currentScene === 'ZamzamScene' || currentScene === 'MakkahJourneyScene')
+    ) {
       setCurrentScene('ArabiaMapScene');
       EventBus.emit(GAME_EVENTS.SWITCH_SCENE, 'ArabiaMapScene');
     }
@@ -248,6 +260,16 @@ export default function HomePage() {
               </button>
             )}
 
+            {/* Interactive Puzzle Hub Button */}
+            <button
+              onClick={() => setIsPuzzleOpen(true)}
+              className="flex items-center gap-2 px-3.5 py-2 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white rounded-xl font-bold text-xs sm:text-sm shadow-md transition"
+              title={isBn ? 'ঐতিহাসিক পাজল ও চ্যালেঞ্জ খেলুন' : 'Play History Puzzles & Challenges'}
+            >
+              <Puzzle className="w-4 h-4 text-amber-200" />
+              <span>{isBn ? 'পাজল গেম' : 'Puzzles'}</span>
+            </button>
+
             {/* Quiz Button */}
             <button
               onClick={() => setIsQuizOpen(true)}
@@ -339,15 +361,15 @@ export default function HomePage() {
               <span>{isBn ? '১. আরবের মানচিত্র ও বাণিজ্য পথ' : '1. Arabia Map & Trade Route'}</span>
             </button>
             <button
-              onClick={() => handleSwitchScene('ZamzamScene')}
+              onClick={() => handleSwitchScene('MakkahJourneyScene')}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 ${
-                currentScene === 'ZamzamScene'
+                currentScene === 'MakkahJourneyScene'
                   ? 'bg-amber-600 text-white shadow'
                   : 'bg-white/80 text-amber-900 hover:bg-amber-200'
               }`}
             >
               <Sparkles className="w-3.5 h-3.5" />
-              <span>{isBn ? '২. মরুভূমিতে যমযম ও কাবা' : '2. Zamzam & Ka\'bah Construction'}</span>
+              <span>{isBn ? '২. মক্কার ঐতিহাসিক উপাখ্যান (৫টি ধাপ)' : '2. Makkah Story Journey (5 Phases)'}</span>
             </button>
           </div>
         )}
@@ -394,7 +416,11 @@ export default function HomePage() {
           </div>
           <div className="text-xs sm:text-sm text-slate-700 font-medium">
             💡 <strong className="text-amber-950">{isBn ? 'কীভাবে খেলবে:' : 'How to Play:'}</strong>{' '}
-            {activeSection === '1.1'
+            {currentScene === 'MakkahJourneyScene'
+              ? isBn
+                ? 'সাফা-মারওয়া, যমযমের অলৌকিক ধারা, জুরহুম গোত্রের কাফেলা ও কাবার প্রাচীর নির্মাণ—ধাপে ধাপে ইন্টারঅ্যাক্ট করে মক্কার ইতিহাস প্রত্যক্ষ করো!'
+                : 'Explore the 5 living phases of Makkah: Safa & Marwah, the Zamzam miracle, Jurhum encampment, Ka\'bah construction, and night sanctuary!'
+              : activeSection === '1.1'
               ? isBn
                 ? 'মানচিত্রে জ্বলজ্বলে পিনগুলোতে ট্যাপ করে আরবের বিভিন্ন ঐতিহাসিক স্থান, সাগর এবং বাণিজ্য পথ আবিষ্কার করো এবং তোমার সীরাহ জার্নালে ব্যাজ সংগ্রহ করো!'
                 : 'Tap the glowing pins across the map to discover historical cities, surrounding seas, and ancient trade routes to collect discovery badges in your Seerah Journal!'
@@ -469,6 +495,12 @@ export default function HomePage() {
             ? 'Quiz Challenge: Kingdoms & Governance (Part 1.2)'
             : 'Quiz Challenge: Geography & Sacred Ka\'bah (Part 1.1)'
         }
+      />
+
+      <PuzzleModal
+        isOpen={isPuzzleOpen}
+        onClose={() => setIsPuzzleOpen(false)}
+        lang={lang}
       />
 
       {/* 7. Footer */}
