@@ -13,6 +13,10 @@ export class BootScene extends Scene {
     this.load.image('kabah_construction_bg', 'assets/images/kabah_construction_bg.jpg');
     this.load.image('makkah_night_sanctuary', 'assets/images/makkah_night_sanctuary.jpg');
     this.load.image('dar_al_nadwah_interior', 'assets/images/dar_al_nadwah_interior.jpg');
+    this.load.image('hubal_idol_sanctuary', 'assets/images/hubal_idol_sanctuary.jpg');
+    this.load.image('azlam_divination_arrows', 'assets/images/azlam_divination_arrows.jpg');
+    this.load.image('ukaz_marketplace_trade', 'assets/images/ukaz_marketplace_trade.jpg');
+    this.load.image('pre_islamic_reformation', 'assets/images/pre_islamic_reformation.jpg');
 
     // 2. Generate procedural helper textures
     this.createProceduralAssets();

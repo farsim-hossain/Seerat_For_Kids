@@ -704,9 +704,123 @@ export const CHAPTER_1_SECTION_2_DATA: Section2Data = {
       optionsBn: ["বনু উমাইয়্যা", "বনু হাশিম (হাশিম, আব্দুল মুত্তালিব ও আব্বাস রা.)", "বনু মাখযূম", "বনু আদী"],
       optionsEn: ["Banu Umayyah", "Banu Hashim (Hashim, Abdul Muttalib & Abbas RA)", "Banu Makhzum", "Banu Adi"],
       correctIndex: 1,
-      explanationBn: "হাজীদের পানি পান করানোর দায়িত্ব 'আস-সিক্বায়াহ' বনু হাশিমের ভাগে ছিল, যা হাশিম থেকে আব্দুল মুত্তালিব ও পরবর্তীতে হযরত আব্বাস (রা.) পালন করেন।",
-      explanationEn: "The privilege of Al-Siqayah was held by Banu Hashim—stewarded by Hashim, Abdul Muttalib, and later Abbas ibn Abd al-Muttalib (RA)."
+      explanationBn: "হাজীদের পানি পান করানোর দায়িত্ব আস-সিক্বায়াহ বনু হাশিম গোত্রের ভাগে অর্পিত ছিল, যা হযরত হাশিম ও আব্দুল মুত্তালিবের মাধ্যমে সংরক্ষিত হয়েছিল।",
+      explanationEn: "Providing water (Al-Siqayah) was the hereditary portfolio of Banu Hashim, honorably held by Hashim, Abdul Muttalib, and later Al-Abbas."
     }
   ]
 };
+
+// ==========================================
+// SECTION 1.3: Pre-Islamic Religion, Society & Moral Character
+// ==========================================
+export const CHAPTER_1_SECTION_3_DATA = {
+  meta: {
+    sectionId: '1.3',
+    titleBn: 'প্রাক-ইসলামী আরবের ধর্ম, সমাজ ও চারিত্রিক মানচিত্র',
+    titleEn: 'Pre-Islamic Religion, Society & Moral Character',
+    taglineBn: 'তাওহীদ থেকে মূর্তিপূজার সূচনা, কুসংস্কার নিরসন এবং ইসলামের মাধ্যমে নৈতিক বিপ্লব।',
+    taglineEn: 'From pure Abrahamic Monotheism to Idolatry, social reformation, and the rise of Islam.',
+    sourceBookBn: 'আর-রাহীকুল মাখতূম (আল-মুবারকপুরী রাহ.) • পৃষ্ঠা ৬১-৬৮',
+    sourceBookEn: 'Ar-Raheeq Al-Makhtum (The Sealed Nectar) • Pages 61-68',
+  },
+
+  // 1. Interactive Stations for IdolHistoryScene.ts
+  stations: [
+    {
+      id: 'hubal_idols',
+      nameBn: 'আম্র বিন লুহাই ও মূর্তিপূজা (হুবাল, লাত, মানাত, উয্যা)',
+      nameEn: 'Amr bin Luhayy & Idolatry (Hubal, Lat, Manat, Uzza)',
+      icon: '🏺',
+      summaryBn: 'দীনে ইবরাহীমির বিশুদ্ধ তাওহীদ ত্যাগ করে সিরিয়া থেকে হুবাল মূর্তি নিয়ে আসার ইতিহাস।',
+      summaryEn: 'How pure Abrahamic Monotheism was corrupted by Amr bin Luhayy bringing Hubal from Syria.',
+      descBn: 'খুযাআ গোত্রের সরদার আম্র বিন লুহাই সিরিয়া সফর করে হুবাল মূর্তি নিয়ে আসে এবং কাবার ঠিক মাঝখানে স্থাপন করে। পরবর্তীতে তায়েফে লাত, নাখলায় উয্যা এবং কুদাইদে মানাত প্রতিষ্ঠিত হয়। রসূলুল্লাহ ﷺ মক্কা বিজয়ের দিন কাবার চারপাশে অবস্থিত ৩৬০টি মূর্তি স্বহস্তে ভেঙে চুরমার করেন।',
+      descEn: 'Amr bin Luhayy introduced idolatry by installing the red agate Hubal inside the Ka\'bah courtyard. Later, Al-Lat in Ta\'if, Al-Uzza in Nakhla, and Manat near the Red Sea were set up. Upon the Conquest of Makkah, Prophet Muhammad ﷺ personally cleansed all 360 idols surrounding the sanctuary.',
+    },
+    {
+      id: 'azlam_arrows',
+      nameBn: 'আজলাম (Azlam - ভাগ্যের তীর নিক্ষেপ)',
+      nameEn: 'Azlam (Divination Arrow Casting)',
+      icon: '🏹',
+      summaryBn: 'সিদ্ধান্ত গ্রহণ ও ভাগ্য পরীক্ষার জন্য হুবাল মূর্তির সামনে পালকবিহীন তীর ঘোরানোর প্রথা।',
+      summaryEn: 'Pre-Islamic practice of spinning featherless arrows in front of Hubal for decisions.',
+      descBn: 'জাহেলী আরবরা গুরুত্বপূর্ণ সফর বা বিয়ের আগে হুবালের সামনে ৩টি তীর (হ্যাঁ, না, ফাঁকা) নিক্ষেপ করত। ইসলাম ভাগ্য পরীক্ষা, জুয়া ও তীর নিক্ষেপকে শয়তানের অপবিত্র কাজ ঘোষণা করে রহিত করেছে এবং তার স্থলাভিষিক্ত করেছে ইস্তিখারা ও আল্লাহর ওপর তাওয়াক্কুল।',
+      descEn: 'Pagan Arabs spun 3 featherless arrows (\'Yes\', \'No\', \'Blank\') at Hubal before travel or marriage. Islam completely abolished this superstition (Surah Al-Ma\'idah: 90), introducing Istikharah prayer and reliance upon Allah.',
+    },
+    {
+      id: 'animal_superstition',
+      nameBn: 'পশু উৎসর্গের কুসংস্কার (বাহীরা, সায়েবা, ওয়াসিলা, হামী)',
+      nameEn: 'Animal Ritual Superstitions (Bahirah, Sa\'ibah, Wasilah, Hami)',
+      icon: '🐪',
+      summaryBn: 'মূর্তির নামে উট ও ছাগল উৎসর্গ করে মুক্ত ছেড়ে দেওয়ার জাহেলী নিয়ম ও কুরআনী খণ্ডন।',
+      summaryEn: 'Pagan rituals of dedicating camels and goats to idols and Allah\'s Quranic correction.',
+      descBn: 'জাহেলী আরবরা মূর্তির উদ্দেশ্যে উটের কান কেটে বা মান্নত করে দুধ দোহন ও বোঝা বহন নিষিদ্ধ করত। আল্লাহ সূরা মায়েদার ১০৩ নম্বর আয়াতে স্পষ্ট জানিয়ে দেন যে এ ধরনের মনগড়া প্রথা সম্পূর্ণ ভুয়া ও আল্লাহর প্রতি মিথ্যা আরোপ।',
+      descEn: 'Arabs dedicated animals to idols (Bahirah, Sa\'ibah, Wasilah, Hami), banning their milk or riding. Allah corrected this in Surah Al-Ma\'idah: 103, declaring that He ordained no such superstitions.',
+    },
+    {
+      id: 'noble_character',
+      nameBn: 'আরবদের ৪টি প্রশংসনীয় চারিত্রিক স্তম্ভ',
+      nameEn: 'The 4 Pillars of Noble Arab Character',
+      icon: '🌟',
+      summaryBn: 'মেহমানদারী, ওয়াদা পালন, বীরত্ব ও আমানতদারী—যে গুণের কারণে তারা বিশ্বজনীন দাওয়াতের জন্য মনোনীত হয়।',
+      summaryEn: 'Generosity, keeping promises, honor, and trustworthiness that prepared them for the Divine Message.',
+      descBn: 'জাহেলী অন্ধকার সত্ত্বেও আরবদের মাঝে ছিল অনন্য মেহমানদারী (নিজের একমাত্র উট জবাই করা), ওয়াদা পালনে অটল থাকা, অন্যায়ের বিরুদ্ধে বীরত্ব এবং সত্যবাদিতা। এই মানবীয় গুণাবলীর কারণেই মহান আল্লাহ তাদের শেষ নবীর পবিত্র বাণী বহনের জন্য নির্বাচিত করেন।',
+      descEn: 'Despite idolatry, Arabs held legendary hospitality, strict fulfillment of covenants, self-respecting bravery, and honesty. These core human virtues made them the chosen vehicle for Allah\'s Universal Final Message.',
+    },
+  ],
+
+  // 2. Section 1.3 Knowledge Challenge (Quiz)
+  quizzes: [
+    {
+      id: 201,
+      questionBn: 'প্রাক-ইসলামী আরবে সর্বপ্রথম সিরিয়া থেকে কাবার আঙিনায় ‘হুবাল’ মূর্তি নিয়ে এসে শিরকের সূচনা করেছিল কে?',
+      questionEn: 'Who first introduced idol worship to Makkah by bringing the Hubal idol from Syria?',
+      optionsBn: ['আবু জাহল', 'আম্র বিন লুহাই আল-খুযাঈ', 'উমাইয়্যা বিন খালাফ', 'আবু সুফিয়ান'],
+      optionsEn: ['Abu Jahl', 'Amr bin Luhayy al-Khuza\'i', 'Umayyah bin Khalaf', 'Abu Sufyan'],
+      correctIndex: 1,
+      explanationBn: 'খুযাআ গোত্রের সরদার আম্র বিন লুহাই সিরিয়া সফর করে লাল আকীক পাথরের ‘হুবাল’ মূর্তি এনে কাবার মাঝখানে স্থাপন করে এবং মক্কাবাসীদের মূর্তিপূজায় লিপ্ত করে।',
+      explanationEn: 'Amr bin Luhayy, chief of Khuza\'a, brought the red agate Hubal idol from Syria and set it up inside the Ka\'bah courtyard.',
+    },
+    {
+      id: 202,
+      questionBn: 'জাহেলী আরবরা হুবালের সামনে ভাগ্য পরীক্ষা ও সিদ্ধান্ত নেওয়ার জন্য যে পালকবিহীন তীর ব্যবহার করত তাকে কী বলা হতো?',
+      questionEn: 'What were the featherless divination arrows used by pagan Arabs in front of Hubal called?',
+      optionsBn: ['আজলাম (Azlam)', 'মাইসির (Maisir)', 'আশনাক (Ashnaq)', 'হুমছ (Hums)'],
+      optionsEn: ['Azlam', 'Maisir', 'Ashnaq', 'Hums'],
+      correctIndex: 0,
+      explanationBn: 'জাহেলী আরবরা সিদ্ধান্ত গ্রহণের জন্য যে তীর ঘোরয়াত তাকে ‘আজলাম’ বলা হতো। কুরআনে আল্লাহ ভাগ্য পরীক্ষা ও জুয়াকে নিষিদ্ধ ঘোষণা করেছেন।',
+      explanationEn: 'The divination arrows spun for making decisions were called \'Azlam\', which Islam explicitly prohibited in Surah Al-Ma\'idah.',
+    },
+    {
+      id: 203,
+      questionBn: 'সূরা মায়েদার ১০৩ নম্বর আয়াতে আল্লাহ তাআলা মুশরিকদের পশু কেন্দ্রিক কোন ৪টি কুসংস্কারকে ভুয়া ও মিথ্যা ঘোষণা করেছেন?',
+      questionEn: 'In Surah Al-Ma\'idah: 103, which 4 animal superstitions did Allah declare as fabricated lies?',
+      optionsBn: ['সিক্বায়াহ, রিফাদাহ, হিজাবাহ, লিওয়া', 'বাহীরা, সায়েবা, ওয়াসিলা, হামী', 'মিরবা, সফী, নাশীতাহ, ফুযূল', 'আউস, খাযরাজ, কেনানা, থাকীফ'],
+      optionsEn: ['Siqayah, Rifadah, Hijabah, Liwa', 'Bahirah, Sa\'ibah, Wasilah, Hami', 'Mirba, Safi, Nashitah, Fudul', 'Aws, Khazraj, Kinana, Thaqif'],
+      correctIndex: 1,
+      explanationBn: 'মুশরিকরা দেবদেবীর উদ্দেশ্যে পশু উৎসর্গ করে সেগুলোর দুধ বা পিঠে চড়া হারাম করত (বাহীরা, সায়েবা, ওয়াসিলা, হামী)। কুরআনে আল্লাহ এ প্রথা বাতিল করেন।',
+      explanationEn: 'Allah explicitly abolished the pagan taboos regarding dedicated livestock categories: Bahirah, Sa\'ibah, Wasilah, and Hami.',
+    },
+    {
+      id: 204,
+      questionBn: 'নাজরানের অত্যাচারী ইহুদি শাসক ইউসুফ জুনুওয়াস খ্রিষ্টান বিশ্বাসীদের জীবন্ত অগ্নিকুণ্ডে পুড়িয়ে মেরেছিল—কুরআনের কোন সূরায় এর উল্লেখ রয়েছে?',
+      questionEn: 'Which Surah in the Holy Quran mentions the Martyrs of the Ditch (Ashab al-Ukhdud) in Najran?',
+      optionsBn: ['সূরা ফিল', 'সূরা বুরুজ (Ashab al-Ukhdud)', 'সূরা কুরাইশ', 'সূরা নসর'],
+      optionsEn: ['Surah Al-Fil', 'Surah Al-Buruj (Ashab al-Ukhdud)', 'Surah Quraish', 'Surah An-Nasr'],
+      correctIndex: 1,
+      explanationBn: 'সূরা বুরুজে (আয়াত ৪-৭) নাজরানের অগ্নিকুণ্ডের ঘটনা ‘আসহাবুল উখদুদ’ হিসেবে বর্ণিত হয়েছে, যেখানে ঈমানদারদের অন্যায্যভাবে আগুনে পোড়ানো হয়েছিল।',
+      explanationEn: 'Surah Al-Buruj (Verses 4-7) recounts the tragic account of Ashab al-Ukhdud, where believers were thrown into trench fires for their faith.',
+    },
+    {
+      id: 205,
+      questionBn: 'তাওহীদের অবক্ষয় সত্ত্বেও প্রাক-ইসলামী আরবদের মধ্যে কোন মহৎ চারিত্রিক বৈশিষ্ট্যের কারণে আল্লাহ তাদের শেষ রসূলের অনুসারী হিসেবে মনোনীত করেন?',
+      questionEn: 'Which noble character trait of ancient Arabs contributed to Allah choosing them as the first bearers of the Universal Message?',
+      optionsBn: ['ধন-সম্পদের অহংকার', 'অসীম মেহমানদারী, ওয়াদা পালন, অন্যায়ের বিরুদ্ধে সাহসিকতা ও আমানতদারী', 'রাজকীয় প্রাসাদ নির্মাণ', 'ভিনদেশী দাসপ্রথা'],
+      optionsEn: ['Pride in wealth', 'Legendary hospitality, keeping covenants, bravery, and trustworthiness', 'Building royal palaces', 'Foreign slavery practices'],
+      correctIndex: 1,
+      explanationBn: 'মরু আরবের মেহমানদারী, জীবন দিয়ে ওয়াদা রক্ষা, আত্মমর্যাদাবোধ ও আমানতদারী ছিল অতুলনীয়। এই চরিত্রকেই ইসলাম এসে বিশ্ব মানবতার কল্যাণে পরিশুদ্ধ করে।',
+      explanationEn: 'Ancient Arabs possessed extraordinary hospitality, covenant-keeping fidelity, bravery, and honesty, which Islam refined into universal guidance.',
+    }
+  ]
+};
+
 

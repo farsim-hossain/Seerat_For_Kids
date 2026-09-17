@@ -164,6 +164,20 @@ export default function SeerahJournal({
                   : CHAPTER_1_SECTION_2_DATA.moralLesson.storyContextEn}
               </p>
             </div>
+
+            <div className="bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-300 p-3.5 rounded-2xl shadow-sm">
+              <div className="text-[11px] font-bold text-purple-800 uppercase tracking-wider mb-1">
+                🏺 {isBn ? 'পর্ব ১.৩ এর শিক্ষা: তাওহীদের সুরক্ষা ও ৪ মহৎ স্বভাব' : 'Part 1.3: Monotheism & Noble Character'}
+              </div>
+              <div className="text-sm font-extrabold text-purple-950 mb-1 font-bengali">
+                {isBn ? 'তাওহীদ, সত্যবাদিতা, ওয়াদা রক্ষা ও অসীম দানশীলতা' : 'Pure Monotheism, Truthfulness & Generosity'}
+              </div>
+              <p className="text-xs text-purple-900 leading-relaxed">
+                {isBn
+                  ? 'মূর্তিপূজা ও কুসংস্কারের পঙ্কিলতা পরিহার করে বিশুদ্ধ একত্ববাদ প্রতিষ্ঠা করা এবং মানবীয় মহৎ গুণাবলী দিয়ে সমাজ পুনর্গঠন।'
+                  : 'Rejecting idolatry and superstitions while upholding pure monotheism, honesty, covenant-keeping, and noble character.'}
+              </p>
+            </div>
           </div>
         </div>
 

@@ -16,12 +16,13 @@ import {
   Languages,
   Landmark,
   Home,
-  CheckCircle2,
   Puzzle,
+  Scroll,
 } from 'lucide-react';
 import {
   CHAPTER_1_DATA,
   CHAPTER_1_SECTION_2_DATA,
+  CHAPTER_1_SECTION_3_DATA,
   SECTIONS_META,
   LocationPoint,
 } from '../data/chapter1Data';
@@ -31,6 +32,7 @@ import LocationCardModal from '../components/LocationCardModal';
 import SeerahJournal from '../components/SeerahJournal';
 import LineageTreeModal from '../components/LineageTreeModal';
 import DarAlNadwahModal from '../components/DarAlNadwahModal';
+import { ReligiousHistoryModal } from '../components/ReligiousHistoryModal';
 import QuizModal from '../components/QuizModal';
 import PuzzleModal from '../components/PuzzleModal';
 import confetti from 'canvas-confetti';
@@ -52,8 +54,8 @@ export default function HomePage() {
   // Navigation View: 'intro' | 'chapter'
   const [appView, setAppView] = useState<'intro' | 'chapter'>('intro');
 
-  // Active Section: '1.1' | '1.2'
-  const [activeSection, setActiveSection] = useState<'1.1' | '1.2'>('1.1');
+  // Active Section: '1.1' | '1.2' | '1.3'
+  const [activeSection, setActiveSection] = useState<'1.1' | '1.2' | '1.3'>('1.1');
 
   // Global Language
   const [lang, setLang] = useState<'bn' | 'en'>('bn');
@@ -70,12 +72,17 @@ export default function HomePage() {
   const [isTreeOpen, setIsTreeOpen] = useState(false);
   const [isDarAlNadwahOpen, setIsDarAlNadwahOpen] = useState(false);
   const [selectedPortfolioId, setSelectedPortfolioId] = useState<string | null>(null);
+  
+  // Section 1.3 Modal state
+  const [selectedReligiousStationId, setSelectedReligiousStationId] = useState<string | null>(null);
+  const [isReligiousModalOpen, setIsReligiousModalOpen] = useState(false);
+
   const [isQuizOpen, setIsQuizOpen] = useState(false);
   const [isPuzzleOpen, setIsPuzzleOpen] = useState(false);
 
   // Active scene mode in Phaser
   const [currentScene, setCurrentScene] = useState<
-    'ArabiaMapScene' | 'ZamzamScene' | 'DarAlNadwahScene' | 'MakkahJourneyScene'
+    'ArabiaMapScene' | 'ZamzamScene' | 'DarAlNadwahScene' | 'MakkahJourneyScene' | 'IdolHistoryScene'
   >('ArabiaMapScene');
   const [audioMuted, setAudioMuted] = useState(false);
 
@@ -92,6 +99,11 @@ export default function HomePage() {
       setIsDarAlNadwahOpen(true);
     };
 
+    const handleReligiousStationSelect = (stationId: string) => {
+      setSelectedReligiousStationId(stationId);
+      setIsReligiousModalOpen(true);
+    };
+
     const handleCelebrate = () => {
       confetti({
         particleCount: 50,
@@ -101,19 +113,26 @@ export default function HomePage() {
     };
 
     const handleSceneChanged = (
-      sceneName: 'ArabiaMapScene' | 'ZamzamScene' | 'DarAlNadwahScene' | 'MakkahJourneyScene'
+      sceneName:
+        | 'ArabiaMapScene'
+        | 'ZamzamScene'
+        | 'DarAlNadwahScene'
+        | 'MakkahJourneyScene'
+        | 'IdolHistoryScene'
     ) => {
       setCurrentScene(sceneName);
     };
 
     EventBus.on(GAME_EVENTS.LOCATION_SELECTED, handleLocationSelect);
     EventBus.on(GAME_EVENTS.PORTFOLIO_SELECTED, handlePortfolioSelect);
+    EventBus.on(GAME_EVENTS.RELIGIOUS_STATION_SELECTED, handleReligiousStationSelect);
     EventBus.on(GAME_EVENTS.CELEBRATE, handleCelebrate);
     EventBus.on(GAME_EVENTS.SCENE_CHANGED, handleSceneChanged);
 
     return () => {
       EventBus.removeListener(GAME_EVENTS.LOCATION_SELECTED, handleLocationSelect);
       EventBus.removeListener(GAME_EVENTS.PORTFOLIO_SELECTED, handlePortfolioSelect);
+      EventBus.removeListener(GAME_EVENTS.RELIGIOUS_STATION_SELECTED, handleReligiousStationSelect);
       EventBus.removeListener(GAME_EVENTS.CELEBRATE, handleCelebrate);
       EventBus.removeListener(GAME_EVENTS.SCENE_CHANGED, handleSceneChanged);
     };
@@ -138,23 +157,34 @@ export default function HomePage() {
   };
 
   const handleSwitchScene = (
-    sceneName: 'ArabiaMapScene' | 'ZamzamScene' | 'DarAlNadwahScene' | 'MakkahJourneyScene'
+    sceneName:
+      | 'ArabiaMapScene'
+      | 'ZamzamScene'
+      | 'DarAlNadwahScene'
+      | 'MakkahJourneyScene'
+      | 'IdolHistoryScene'
   ) => {
     setCurrentScene(sceneName);
     EventBus.emit(GAME_EVENTS.SWITCH_SCENE, sceneName);
   };
 
-  const handleSelectSection = (sectionId: '1.1' | '1.2') => {
+  const handleSelectSection = (sectionId: '1.1' | '1.2' | '1.3') => {
     setActiveSection(sectionId);
     setAppSection(sectionId);
 
-    // Switch to ArabiaMapScene so the map refreshes with the section's markers
-    if (sectionId === '1.1' && currentScene === 'DarAlNadwahScene') {
+    // Switch scene if switching between sections to avoid scene mismatch
+    if (sectionId === '1.1' && (currentScene === 'DarAlNadwahScene' || currentScene === 'IdolHistoryScene')) {
       setCurrentScene('ArabiaMapScene');
       EventBus.emit(GAME_EVENTS.SWITCH_SCENE, 'ArabiaMapScene');
     } else if (
       sectionId === '1.2' &&
-      (currentScene === 'ZamzamScene' || currentScene === 'MakkahJourneyScene')
+      (currentScene === 'ZamzamScene' || currentScene === 'MakkahJourneyScene' || currentScene === 'IdolHistoryScene')
+    ) {
+      setCurrentScene('ArabiaMapScene');
+      EventBus.emit(GAME_EVENTS.SWITCH_SCENE, 'ArabiaMapScene');
+    } else if (
+      sectionId === '1.3' &&
+      (currentScene === 'ZamzamScene' || currentScene === 'MakkahJourneyScene' || currentScene === 'DarAlNadwahScene')
     ) {
       setCurrentScene('ArabiaMapScene');
       EventBus.emit(GAME_EVENTS.SWITCH_SCENE, 'ArabiaMapScene');
@@ -180,9 +210,19 @@ export default function HomePage() {
     );
   }
 
-  const activeSectionMeta = activeSection === '1.1' ? SECTIONS_META[0] : SECTIONS_META[1];
+  const activeSectionMeta =
+    activeSection === '1.3'
+      ? CHAPTER_1_SECTION_3_DATA.meta
+      : activeSection === '1.2'
+      ? SECTIONS_META[1]
+      : SECTIONS_META[0];
+
   const activeQuizQuestions =
-    activeSection === '1.2' ? CHAPTER_1_SECTION_2_DATA.quizzes : CHAPTER_1_DATA.quizzes;
+    activeSection === '1.3'
+      ? CHAPTER_1_SECTION_3_DATA.quizzes
+      : activeSection === '1.2'
+      ? CHAPTER_1_SECTION_2_DATA.quizzes
+      : CHAPTER_1_DATA.quizzes;
 
   return (
     <main className="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-6 flex flex-col justify-between min-h-screen">
@@ -260,6 +300,20 @@ export default function HomePage() {
               </button>
             )}
 
+            {/* Section 1.3 Action: Religious History Modal */}
+            {activeSection === '1.3' && (
+              <button
+                onClick={() => {
+                  setSelectedReligiousStationId('hubal_idols');
+                  setIsReligiousModalOpen(true);
+                }}
+                className="flex items-center gap-2 px-3.5 py-2 bg-amber-100/90 hover:bg-amber-200 text-amber-950 rounded-xl font-bold text-xs sm:text-sm border border-amber-300 transition shadow-sm"
+              >
+                <Scroll className="w-4 h-4 text-amber-700" />
+                <span>{isBn ? 'ধর্ম ও সমাজ সংস্কার' : 'Religious & Social Reform'}</span>
+              </button>
+            )}
+
             {/* Interactive Puzzle Hub Button */}
             <button
               onClick={() => setIsPuzzleOpen(true)}
@@ -278,7 +332,7 @@ export default function HomePage() {
               <HelpCircle className="w-4 h-4 text-emerald-700" />
               <span>
                 {isBn
-                  ? `কুইজ (${activeSection === '1.1' ? '১.১' : '১.২'})`
+                  ? `কুইজ (${activeSection === '1.3' ? '১.৩' : activeSection === '1.2' ? '১.২' : '১.১'})`
                   : `Quiz (${activeSection})`}
               </span>
             </button>
@@ -302,7 +356,7 @@ export default function HomePage() {
             <span className="text-xs font-bold text-amber-900 uppercase tracking-wider font-bengali">
               {isBn ? 'অধ্যায়ের পর্ব নির্বাচন:' : 'Select Section:'}
             </span>
-            <div className="flex items-center gap-2 bg-amber-100/80 p-1 rounded-xl border border-amber-300">
+            <div className="flex flex-wrap items-center gap-2 bg-amber-100/80 p-1 rounded-xl border border-amber-300">
               <button
                 onClick={() => handleSelectSection('1.1')}
                 className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 ${
@@ -313,7 +367,7 @@ export default function HomePage() {
               >
                 <Compass className="w-3.5 h-3.5" />
                 <span>
-                  {isBn ? 'পর্ব ১.১: ভৌগোলিক পরিচয় ও কাবা' : 'Part 1.1: Geography & Ka\'bah'}
+                  {isBn ? 'পর্ব ১.১: ভূগোল ও কাবা' : 'Part 1.1: Geography & Ka\'bah'}
                 </span>
               </button>
 
@@ -327,7 +381,21 @@ export default function HomePage() {
               >
                 <Landmark className="w-3.5 h-3.5" />
                 <span>
-                  {isBn ? 'পর্ব ১.২: রাজবংশ ও মক্কার প্রশাসন' : 'Part 1.2: Kingdoms & Governance'}
+                  {isBn ? 'পর্ব ১.২: রাজবংশ ও প্রশাসন' : 'Part 1.2: Kingdoms & Governance'}
+                </span>
+              </button>
+
+              <button
+                onClick={() => handleSelectSection('1.3')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 ${
+                  activeSection === '1.3'
+                    ? 'bg-amber-600 text-white shadow-sm'
+                    : 'text-amber-950 hover:bg-amber-200'
+                }`}
+              >
+                <Scroll className="w-3.5 h-3.5" />
+                <span>
+                  {isBn ? 'পর্ব ১.৩: ধর্ম, সমাজ ও চারিত্রিক মানচিত্র' : 'Part 1.3: Religion & Morals'}
                 </span>
               </button>
             </div>
@@ -401,6 +469,34 @@ export default function HomePage() {
             </button>
           </div>
         )}
+
+        {/* Section 1.3 Scenes */}
+        {activeSection === '1.3' && (
+          <div className="flex gap-2">
+            <button
+              onClick={() => handleSwitchScene('ArabiaMapScene')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 ${
+                currentScene === 'ArabiaMapScene'
+                  ? 'bg-amber-600 text-white shadow'
+                  : 'bg-white/80 text-amber-900 hover:bg-amber-200'
+              }`}
+            >
+              <Compass className="w-3.5 h-3.5" />
+              <span>{isBn ? '১. প্রাচীন আরবের মানচিত্র' : '1. Arabia Map'}</span>
+            </button>
+            <button
+              onClick={() => handleSwitchScene('IdolHistoryScene')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 ${
+                currentScene === 'IdolHistoryScene'
+                  ? 'bg-amber-600 text-white shadow'
+                  : 'bg-white/80 text-amber-900 hover:bg-amber-200'
+              }`}
+            >
+              <Scroll className="w-3.5 h-3.5" />
+              <span>{isBn ? '২. ধর্ম, কুসংস্কার ও নৈতিক সংস্কার দৃশ্যপট' : '2. Religion & Moral Reform Scene'}</span>
+            </button>
+          </div>
+        )}
       </div>
 
       {/* 4. Phaser 3 Game World Viewport */}
@@ -416,7 +512,11 @@ export default function HomePage() {
           </div>
           <div className="text-xs sm:text-sm text-slate-700 font-medium">
             💡 <strong className="text-amber-950">{isBn ? 'কীভাবে খেলবে:' : 'How to Play:'}</strong>{' '}
-            {currentScene === 'MakkahJourneyScene'
+            {currentScene === 'IdolHistoryScene'
+              ? isBn
+                ? 'আম্র বিন লুহাইয়ের হুবাল মূর্তি, ভাগ্যের তীর আজলাম, পশুর কুসংস্কার ও আরবদের ৪টি মহৎ স্বভাবের স্থানগুলোতে ট্যাপ করে সত্য আবিষ্কার করো!'
+                : 'Tap on Amr bin Luhayy\'s Hubal, Azlam arrows, livestock taboos, and the 4 noble Arab virtues to discover authentic history!'
+              : currentScene === 'MakkahJourneyScene'
               ? isBn
                 ? 'সাফা-মারওয়া, যমযমের অলৌকিক ধারা, জুরহুম গোত্রের কাফেলা ও কাবার প্রাচীর নির্মাণ—ধাপে ধাপে ইন্টারঅ্যাক্ট করে মক্কার ইতিহাস প্রত্যক্ষ করো!'
                 : 'Explore the 5 living phases of Makkah: Safa & Marwah, the Zamzam miracle, Jurhum encampment, Ka\'bah construction, and night sanctuary!'
@@ -424,9 +524,13 @@ export default function HomePage() {
               ? isBn
                 ? 'মানচিত্রে জ্বলজ্বলে পিনগুলোতে ট্যাপ করে আরবের বিভিন্ন ঐতিহাসিক স্থান, সাগর এবং বাণিজ্য পথ আবিষ্কার করো এবং তোমার সীরাহ জার্নালে ব্যাজ সংগ্রহ করো!'
                 : 'Tap the glowing pins across the map to discover historical cities, surrounding seas, and ancient trade routes to collect discovery badges in your Seerah Journal!'
-              : isBn
+              : activeSection === '1.2'
+              ? isBn
                 ? 'দারুন নদওয়ার সভাকক্ষে কুরাইশের বিভিন্ন সংসদীয় দায়িত্ব এবং প্রাচীন আরবের সীমান্ত রাজ্যগুলোতে ট্যাপ করে মক্কার শাসন ও যী কারের ইতিহাস শেখো!'
-                : 'Step into Dar al-Nadwah or explore regional kingdoms on the map to learn how ancient Makkah governed and the victory of Dhi Qar!'}
+                : 'Step into Dar al-Nadwah or explore regional kingdoms on the map to learn how ancient Makkah governed and the victory of Dhi Qar!'
+              : isBn
+                ? 'মানচিত্রে অথবা ধর্ম ও কুসংস্কার দৃশ্যপটে ট্যাপ করে প্রাক-ইসলামী আরবের পূর্ণচিত্র প্রত্যক্ষ করো!'
+                : 'Explore ancient Arabia on the map or tap the Religion & Moral Reform scene to see the complete pre-Islamic landscape!'}
           </div>
         </div>
         <button
@@ -476,6 +580,15 @@ export default function HomePage() {
         initialPortfolioId={selectedPortfolioId}
       />
 
+      <ReligiousHistoryModal
+        stationId={selectedReligiousStationId}
+        onClose={() => {
+          setIsReligiousModalOpen(false);
+          setSelectedReligiousStationId(null);
+        }}
+        lang={lang}
+      />
+
       <QuizModal
         isOpen={isQuizOpen}
         onClose={() => setIsQuizOpen(false)}
@@ -486,12 +599,16 @@ export default function HomePage() {
         lang={lang}
         quizzes={activeQuizQuestions}
         titleBn={
-          activeSection === '1.2'
+          activeSection === '1.3'
+            ? 'কুইজ চ্যালেঞ্জ: প্রাক-ইসলামী ধর্ম, সমাজ ও নৈতিকতা (পর্ব ১.৩)'
+            : activeSection === '1.2'
             ? 'কুইজ চ্যালেঞ্জ: আরবের রাজবংশ ও মক্কার প্রশাসন (পর্ব ১.২)'
             : 'কুইজ চ্যালেঞ্জ: আরবের ভূগোল ও পবিত্র কাবা (পর্ব ১.১)'
         }
         titleEn={
-          activeSection === '1.2'
+          activeSection === '1.3'
+            ? 'Quiz Challenge: Religion, Society & Morals (Part 1.3)'
+            : activeSection === '1.2'
             ? 'Quiz Challenge: Kingdoms & Governance (Part 1.2)'
             : 'Quiz Challenge: Geography & Sacred Ka\'bah (Part 1.1)'
         }

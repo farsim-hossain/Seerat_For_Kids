@@ -3,7 +3,7 @@ import { EventBus, GAME_EVENTS, currentAppLanguage, currentAppSection } from '..
 import { CHAPTER_1_DATA, CHAPTER_1_SECTION_2_DATA, LocationPoint } from '../../data/chapter1Data';
 
 export class ArabiaMapScene extends Scene {
-  private currentSection: '1.1' | '1.2' = currentAppSection;
+  private currentSection: '1.1' | '1.2' | '1.3' = currentAppSection;
   private caravanPathPoints: { x: number; y: number }[] = [];
   private caravanIndex = 0;
   private caravanSprite?: GameObjects.Sprite;
@@ -57,7 +57,7 @@ export class ArabiaMapScene extends Scene {
       this.updateLanguageStrings(lang);
     };
 
-    const onSwitchSection = (sec: '1.1' | '1.2') => {
+    const onSwitchSection = (sec: '1.1' | '1.2' | '1.3') => {
       if (this.currentSection !== sec) {
         this.currentSection = sec;
         this.refreshMarkers();
@@ -102,7 +102,13 @@ export class ArabiaMapScene extends Scene {
     }
 
     if (this.titleLabel && this.titleLabel.active && this.titleLabel.scene) {
-      if (this.currentSection === '1.2') {
+      if (this.currentSection === '1.3') {
+        this.titleLabel.setText(
+          isBn
+            ? 'أَدْيَانُ الْعَرَبِ وَأَخْلَاقُهُمْ\nধর্ম, সমাজ ও চারিত্রিক মানচিত্র'
+            : 'أَدْيَانُ الْعَرَبِ وَأَخْلَاقُهُمْ\nRELIGION & MORAL MAP'
+        );
+      } else if (this.currentSection === '1.2') {
         this.titleLabel.setText(
           isBn
             ? 'مَمَالِكُ الْعَرَبِ\nপ্রাচীন আরব রাজ্য ও সীমানা'

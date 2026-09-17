@@ -4,6 +4,7 @@ import { ArabiaMapScene } from './scenes/ArabiaMapScene';
 import { ZamzamScene } from './scenes/ZamzamScene';
 import { DarAlNadwahScene } from './scenes/DarAlNadwahScene';
 import { MakkahJourneyScene } from './scenes/MakkahJourneyScene';
+import { IdolHistoryScene } from './scenes/IdolHistoryScene';
 
 export const createPhaserConfig = (parent: HTMLElement): Types.Core.GameConfig => ({
   type: AUTO,
@@ -22,5 +23,5 @@ export const createPhaserConfig = (parent: HTMLElement): Types.Core.GameConfig =
       debug: false,
     },
   },
-  scene: [BootScene, ArabiaMapScene, ZamzamScene, DarAlNadwahScene, MakkahJourneyScene],
+  scene: [BootScene, ArabiaMapScene, ZamzamScene, DarAlNadwahScene, MakkahJourneyScene, IdolHistoryScene],
 });
