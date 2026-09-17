@@ -25,13 +25,16 @@ export class ArabiaMapScene extends Scene {
     this.markers = [];
     this.markerLabels = [];
 
-    // Draw ocean background
-    const ocean = this.add.graphics();
-    ocean.fillGradientStyle(0x0284c7, 0x0284c7, 0x075985, 0x075985, 1);
-    ocean.fillRect(0, 0, width, height);
-
-    // Draw stylized Arabian Peninsula polygon & terrain
-    this.drawArabiaLandmass(width, height);
+    // Draw high-resolution parchment map background artwork
+    if (this.textures.exists('arabia_map_parchment')) {
+      const bgMap = this.add.image(width / 2, height / 2, 'arabia_map_parchment');
+      bgMap.setDisplaySize(width, height);
+    } else {
+      const ocean = this.add.graphics();
+      ocean.fillGradientStyle(0x0284c7, 0x0284c7, 0x075985, 0x075985, 1);
+      ocean.fillRect(0, 0, width, height);
+      this.drawArabiaLandmass(width, height);
+    }
 
     // Draw trade routes
     this.drawTradeRoutes(width, height);

@@ -81,6 +81,20 @@ export default function IntroScreen({ lang, onToggleLang, onStartJourney }: Intr
             : 'An interactive discovery journey exploring the ancient desert fortress of Arabia, the miracle of Zamzam, the foundations of the Ka\'bah, and the historic council of Dar al-Nadwah.'}
         </p>
 
+        {/* Hero Artwork Banner */}
+        <div className="w-full max-w-3xl aspect-[21/9] rounded-3xl overflow-hidden border-4 border-amber-300 shadow-xl mb-8 relative group">
+          <img
+            src="/assets/images/intro_hero_banner.jpg"
+            alt="Ancient Arabia Landscape Banner"
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-amber-950/60 via-transparent to-transparent flex items-end p-4 sm:p-6">
+            <span className="text-white font-bold text-xs sm:text-sm font-bengali bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20">
+              {isBn ? '✨ আরবের ঐতিহাসিক ভূখণ্ডের সচিত্র অভিজ্ঞতা' : '✨ Illustrated Historic Arabia Realm'}
+            </span>
+          </div>
+        </div>
+
         {/* Section Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-3xl mb-10 text-left">
           {/* Section 1.1 Card */}

@@ -222,48 +222,33 @@ export class MakkahJourneyScene extends Scene {
     this.updateLanguageStrings(currentAppLanguage);
   }
 
+  private currentBgImage?: GameObjects.Image;
+
   // --- 1. Background, Terrain & Lighting ---
   private drawSkyAndTerrain(phase: number, w: number, h: number) {
-    if (!this.skyGraphics || !this.terrainGraphics) return;
+    if (this.currentBgImage) {
+      this.currentBgImage.destroy();
+      this.currentBgImage = undefined;
+    }
 
-    this.skyGraphics.clear();
-    this.terrainGraphics.clear();
+    let bgKey = 'makkah_valley_day';
+    if (phase === 3) bgKey = 'zamzam_oasis_bloom';
+    else if (phase === 4) bgKey = 'kabah_construction_bg';
+    else if (phase === 5) bgKey = 'makkah_night_sanctuary';
+
+    if (this.textures.exists(bgKey)) {
+      this.currentBgImage = this.add.image(w / 2, h / 2, bgKey);
+      this.currentBgImage.setDisplaySize(w, h);
+      this.currentBgImage.setDepth(-10);
+    }
+
+    if (this.skyGraphics) this.skyGraphics.clear();
+    if (this.terrainGraphics) this.terrainGraphics.clear();
 
     if (phase === 5) {
-      // Deep starry night sky
-      this.skyGraphics.fillGradientStyle(0x020617, 0x090d16, 0x1e1b4b, 0x1e1b4b, 1);
-      this.skyGraphics.fillRect(0, 0, w, h);
       this.starsContainer?.setAlpha(1);
-
-      // Night valley floor
-      this.terrainGraphics.fillStyle(0x451a03, 1);
-      this.terrainGraphics.fillRect(0, h * 0.58, w, h * 0.42);
-
-      // Night mountains
-      this.terrainGraphics.fillStyle(0x1e293b, 0.7);
-      this.terrainGraphics.fillTriangle(w * 0.05, h * 0.62, w * 0.22, h * 0.35, w * 0.42, h * 0.62);
-      this.terrainGraphics.fillTriangle(w * 0.58, h * 0.62, w * 0.8, h * 0.36, w * 0.98, h * 0.62);
     } else {
-      // Daytime / Golden desert sunlight
       this.starsContainer?.setAlpha(0);
-      this.skyGraphics.fillGradientStyle(0xfef08a, 0xfde68a, 0xf59e0b, 0xd97706, 1);
-      this.skyGraphics.fillRect(0, 0, w, h);
-
-      // Distant rolling mountains (Mount Safa left, Mount Marwah right)
-      this.terrainGraphics.fillStyle(0x92400e, 0.5);
-      this.terrainGraphics.fillTriangle(w * 0.02, h * 0.62, w * 0.2, h * 0.36, w * 0.42, h * 0.62);
-      this.terrainGraphics.fillTriangle(w * 0.58, h * 0.62, w * 0.82, h * 0.37, w * 0.98, h * 0.62);
-
-      // Middle ground dunes
-      this.terrainGraphics.fillStyle(0xb45309, 0.4);
-      this.terrainGraphics.fillTriangle(w * 0.15, h * 0.64, w * 0.35, h * 0.48, w * 0.6, h * 0.64);
-      this.terrainGraphics.fillTriangle(w * 0.45, h * 0.64, w * 0.7, h * 0.49, w * 0.9, h * 0.64);
-
-      // Sandy valley floor
-      this.terrainGraphics.fillStyle(0xd97706, 1);
-      this.terrainGraphics.fillRect(0, h * 0.6, w, h * 0.4);
-      this.terrainGraphics.lineStyle(3, 0xa16207, 1);
-      this.terrainGraphics.lineBetween(0, h * 0.6, w, h * 0.6);
     }
   }
 

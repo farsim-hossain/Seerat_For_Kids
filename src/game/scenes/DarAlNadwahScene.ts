@@ -17,43 +17,15 @@ export class DarAlNadwahScene extends Scene {
     const h = this.cameras.main.height;
     this.stationLabels = [];
 
-    // 1. Atmosphere: Warm desert dusk through open arches
-    const sky = this.add.graphics();
-    sky.fillGradientStyle(0x1e1b4b, 0x312e81, 0x4338ca, 0x1e1b4b, 1);
-    sky.fillRect(0, 0, w, h);
-
-    // Distant Ka'bah silhouette through central arch (respectful sacred sanctuary)
-    const sanctuaryBg = this.add.graphics();
-    sanctuaryBg.fillStyle(0x0f172a, 0.9);
-    // Ka'bah cube silhouette in the courtyard
-    sanctuaryBg.fillRect(w * 0.46, h * 0.28, 64, 60);
-    sanctuaryBg.lineStyle(2, 0xd97706, 0.8);
-    sanctuaryBg.strokeRect(w * 0.46, h * 0.28, 64, 60);
-
-    // Council Chamber Stone Architecture (Columns and arches)
-    const chamber = this.add.graphics();
-    chamber.fillStyle(0xd97706, 0.15);
-    chamber.fillRect(0, 0, w, h);
-
-    // Stone columns
-    chamber.fillStyle(0x78350f, 0.9);
-    // Left pillar
-    chamber.fillRect(w * 0.08, 0, 36, h);
-    // Right pillar
-    chamber.fillRect(w * 0.88, 0, 36, h);
-    // Upper arch lintel
-    chamber.fillRect(0, 0, w, 70);
-
-    // Council floor carpet (Warm crimson/amber)
-    const floor = this.add.graphics();
-    floor.fillStyle(0x881337, 0.9);
-    floor.fillRoundedRect(w * 0.12, h * 0.45, w * 0.76, h * 0.52, 16);
-    floor.lineStyle(4, 0xf59e0b, 0.8);
-    floor.strokeRoundedRect(w * 0.12, h * 0.45, w * 0.76, h * 0.52, 16);
-
-    // Decorative inner border
-    floor.lineStyle(2, 0xfde68a, 0.4);
-    floor.strokeRoundedRect(w * 0.15, h * 0.48, w * 0.7, h * 0.46, 12);
+    // 1. High-resolution council chamber interior artwork
+    if (this.textures.exists('dar_al_nadwah_interior')) {
+      const bgChamber = this.add.image(w / 2, h / 2, 'dar_al_nadwah_interior');
+      bgChamber.setDisplaySize(w, h);
+    } else {
+      const sky = this.add.graphics();
+      sky.fillGradientStyle(0x1e1b4b, 0x312e81, 0x4338ca, 0x1e1b4b, 1);
+      sky.fillRect(0, 0, w, h);
+    }
 
     // Title banner
     this.titleBanner = this.add.text(w * 0.5, 36, '', {

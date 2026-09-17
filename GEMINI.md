@@ -749,5 +749,26 @@ Instead:
 
 That will keep the app from becoming repetitive.
 
-Ultimately, your chapters could therefore feel completely different:
+---
+
+# 12. Mandatory Visual Artwork & Image Generation Rule
+
+Whenever creating or expanding any interactive chapter or section in the app, the agent **MUST automatically generate high-resolution visual artwork** (`generate_image`) alongside building the interactive Phaser scenes and React components. **The user should never have to manually ask the agent to create images.**
+
+### Core Requirements:
+
+1. **Automatic High-Res Asset Creation:**
+   - Generate crisp 16:9 / 1:1 image assets using `generate_image` for all backgrounds, environments, landscapes, ancient architecture, maps, and UI hero banners.
+   - Save generated images to `public/assets/images/` and preload them in `BootScene.ts`.
+   - Do NOT rely on plain procedural color shapes or text-heavy layouts when high-resolution artwork can be generated.
+
+2. **Strict Non-Human Depiction Constraints:**
+   - Prompts for `generate_image` MUST strictly focus on **landscapes, desert terrain, architecture, historical parchment maps, and objects**.
+   - **NEVER visually depict Prophet Muhammad ﷺ.**
+   - **NEVER generate human faces or figures** (always include `no humans, landscape artwork, high resolution` in prompts).
+
+3. **Illustration-Heavy Storybook Design:**
+   - Combine high-res artwork backgrounds with rich Phaser interactivity (particle fountain sprays, day-to-night lighting transitions, object interactions, interactive puzzles).
+   - Keep text concise, child-friendly, and fully bilingual (Bangla + English).
+
 

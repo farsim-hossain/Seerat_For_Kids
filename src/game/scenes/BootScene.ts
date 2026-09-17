@@ -6,7 +6,15 @@ export class BootScene extends Scene {
   }
 
   preload() {
-    // Generate procedural textures to guarantee zero broken asset dependencies
+    // 1. Load high-resolution background artwork assets
+    this.load.image('arabia_map_parchment', 'assets/images/arabia_map_parchment.jpg');
+    this.load.image('makkah_valley_day', 'assets/images/makkah_valley_day.jpg');
+    this.load.image('zamzam_oasis_bloom', 'assets/images/zamzam_oasis_bloom.jpg');
+    this.load.image('kabah_construction_bg', 'assets/images/kabah_construction_bg.jpg');
+    this.load.image('makkah_night_sanctuary', 'assets/images/makkah_night_sanctuary.jpg');
+    this.load.image('dar_al_nadwah_interior', 'assets/images/dar_al_nadwah_interior.jpg');
+
+    // 2. Generate procedural helper textures
     this.createProceduralAssets();
   }
 
