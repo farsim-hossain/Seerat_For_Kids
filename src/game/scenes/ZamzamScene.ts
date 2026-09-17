@@ -57,6 +57,15 @@ export class ZamzamScene extends Scene {
       padding: { x: 12, y: 6 },
     }).setOrigin(0.5);
 
+    // Glowing pulse tween for instruction prompt bar
+    this.tweens.add({
+      targets: this.promptText,
+      scale: 1.06,
+      duration: 800,
+      yoyo: true,
+      repeat: -1,
+    });
+
     // Back to Map Button
     this.backBtn = this.add.text(70, 36, '', {
       fontFamily: 'sans-serif',
@@ -150,8 +159,8 @@ export class ZamzamScene extends Scene {
     if (!this.waterDiscovered) {
       this.promptText.setText(
         isBn
-          ? '👇 শুকনো মাটিতে ট্যাপ করে যমযম কূপের মিষ্টি পানির সন্ধান করো!'
-          : '👇 Tap the dry desert ground to reveal the sweet spring of Zamzam!'
+          ? '👇 ট্যাপ করে যমযমের পানির সন্ধান করো!'
+          : '👇 Tap the desert ground to reveal the water of Zamzam!'
       );
     } else if (!this.kabahBuilt) {
       this.promptText.setText(

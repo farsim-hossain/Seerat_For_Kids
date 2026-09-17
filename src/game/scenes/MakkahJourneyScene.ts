@@ -355,9 +355,18 @@ export class MakkahJourneyScene extends Scene {
     const tapHint = this.add.text(
       wellX,
       wellY + 48,
-      isBn ? '👆 স্পর্শ করে যমযম কূপের মিষ্টি পানি প্রবাহিত করো!' : '👆 Tap to make the sweet Zamzam water burst forth!',
-      { fontFamily: 'sans-serif', fontSize: '12px', color: '#0369a1', backgroundColor: '#e0f2fe', padding: { x: 8, y: 4 } }
+      isBn ? '👆 যমযমের পানি' : '👆 Zamzam Water',
+      { fontFamily: 'sans-serif', fontSize: '13px', color: '#0369a1', backgroundColor: '#e0f2fe', padding: { x: 10, y: 5 } }
     ).setOrigin(0.5);
+
+    // Glowing pulse tween for tapHint bar
+    this.tweens.add({
+      targets: tapHint,
+      scale: 1.08,
+      duration: 750,
+      yoyo: true,
+      repeat: -1,
+    });
 
     this.contentContainer.add([wellSpot, wellIcon, tapHint]);
 
@@ -369,8 +378,8 @@ export class MakkahJourneyScene extends Scene {
         this.animateFlockingBirds(w, h);
         tapHint.setText(
           isBn
-            ? '✨ সুবহানাল্লাহ! যমযমের মিষ্টি পানির ঝরনা প্রবাহিত হলো!'
-            : '✨ SubhanAllah! The pure sweet water of Zamzam gushes forth!'
+            ? '✨ সুবহানাল্লাহ! যমযমের পানি'
+            : '✨ SubhanAllah! Zamzam Water'
         );
       }
     });
@@ -436,6 +445,15 @@ export class MakkahJourneyScene extends Scene {
     ).setOrigin(0.5).setInteractive({ cursor: 'pointer' });
 
     pitchBtn.add([btnBg, btnText]);
+
+    // Glowing pulse tween for pitching button
+    this.tweens.add({
+      targets: pitchBtn,
+      scale: 1.05,
+      duration: 750,
+      yoyo: true,
+      repeat: -1,
+    });
 
     const tentsLayer = this.add.container(0, 0);
     this.contentContainer.add([spring, springRipple, tentsLayer, pitchBtn]);
@@ -517,11 +535,20 @@ export class MakkahJourneyScene extends Scene {
     const btnText = this.add.text(
       0,
       0,
-      isBn ? '🧱 পাথরের স্তর স্থাপন করো (কাবার ভিত্তি)' : '🧱 Place Stone Layer (Ka\'bah Wall)',
-      { fontFamily: 'sans-serif', fontSize: '12px', color: '#fef3c7', fontStyle: 'bold' }
+      isBn ? '🧱 কাবার ভিত্তি' : '🧱 Ka\'bah Foundation',
+      { fontFamily: 'sans-serif', fontSize: '13px', color: '#fef3c7', fontStyle: 'bold' }
     ).setOrigin(0.5).setInteractive({ cursor: 'pointer' });
 
     buildBtn.add([btnBg, btnText]);
+
+    // Glowing pulse tween for stone placement button
+    this.tweens.add({
+      targets: buildBtn,
+      scale: 1.05,
+      duration: 750,
+      yoyo: true,
+      repeat: -1,
+    });
 
     const drawKabahLayers = () => {
       kabahContainer.removeAll(true);
