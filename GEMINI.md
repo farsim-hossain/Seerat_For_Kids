@@ -773,17 +773,21 @@ Whenever creating or expanding any interactive chapter or section in the app, th
 
 ---
 
-# 13. Mandatory Strict Source Text Extraction Rule
+# 13. Mandatory Strict Source Text Extraction & Implementation Rule
 
-Whenever creating or expanding any chapter, section, interactive scene, quiz, or modal in the app, the agent **MUST strictly follow the exact text extractions derived from the user's provided book screenshots** (located in `chapters/`, e.g. `1a. Arab.md`, `1b. Arab.md`, `1c. Arab.md`).
+Whenever creating or expanding any chapter, section, interactive scene, quiz, or modal in the app, the agent **MUST carefully extract texts from the user's provided book screenshots**, thoroughly analyze and understand the extracted narrative, and directly implement it into the interactive app engine.
 
 ### Core Requirements:
-1. **Zero External Knowledge Inventions:**
-   - The agent MUST NOT use its own general training knowledge or external assumptions to invent historical facts, dates, quotes, narrations, or interpretations.
+1. **Meticulous Screenshot Text Extraction & Deep Understanding:**
+   - The agent MUST carefully inspect and extract 100% of the text from uploaded page screenshots in `chapters/screenshots/` into corresponding Markdown extractions (e.g. `1a. Arab.md`, `1b. Arab.md`, `1c. Arab.md`).
+   - The agent MUST deeply analyze, comprehend, and structure the historical context, major events, people, places, concepts, and moral lessons from the extracted text before building any interactive feature.
+
+2. **Zero External Knowledge Inventions:**
+   - The agent MUST NOT use its own general AI training knowledge or external assumptions to invent historical facts, dates, quotes, narrations, or interpretations.
    - All historical narratives, summaries, quizzes, character lessons, and interactive UI content MUST be strictly derived from the exact text extractions of the user's book screenshots.
 
-2. **Strict Source Alignment:**
-   - Extract facts, places, people, concepts, and moral lessons directly from the Markdown extractions created from the uploaded screenshots.
+3. **Faithful App Implementation:**
+   - Translate the extracted historical narrative directly into Phaser scenes, interactive hotspots, quizzes, and modal cards without skipping authentic details or distorting facts.
    - Preserve 100% historical fidelity and alignment with the book *Ar-Raheeq Al-Makhtum*.
 
 
