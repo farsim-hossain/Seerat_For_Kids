@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { Sparkles, ChevronRight, Languages, BookOpen, ShieldCheck, Lock, Map, UserCheck, HeartHandshake } from 'lucide-react';
-import confetti from 'canvas-confetti';
 
 interface IntroScreenProps {
   lang: 'bn' | 'en';
@@ -14,11 +13,6 @@ export default function IntroScreen({ lang, onToggleLang, onStartJourney }: Intr
   const isBn = lang === 'bn';
 
   const handleStartChapter = (sectionId: '1.1' | '1.2' | '1.3' = '1.1') => {
-    confetti({
-      particleCount: 70,
-      spread: 70,
-      origin: { y: 0.6 },
-    });
     onStartJourney(sectionId);
   };
 

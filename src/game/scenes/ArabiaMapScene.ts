@@ -1,4 +1,4 @@
-import { Scene, Math as PMath, GameObjects } from 'phaser';
+import { Scene, Math as PMath, GameObjects, Geom } from 'phaser';
 import { EventBus, GAME_EVENTS, currentAppLanguage, currentAppSection } from '../EventBus';
 import { CHAPTER_1_DATA, CHAPTER_1_SECTION_2_DATA, LocationPoint } from '../../data/chapter1Data';
 
@@ -223,9 +223,14 @@ export class ArabiaMapScene extends Scene {
 
       const container = this.add.container(posX, posY);
 
-      // Pin Sprite
+      // Pin Sprite with generous touch hit area for mobile
       const textureKey = loc.type === 'holy_city' ? 'holy_pin' : 'location_pin';
-      const pin = this.add.sprite(0, 0, textureKey).setInteractive({ cursor: 'pointer' });
+      const pin = this.add.sprite(0, 0, textureKey);
+      pin.setInteractive(
+        new Geom.Circle(pin.width / 2, pin.height / 2, Math.max(pin.width, 36)),
+        Geom.Circle.Contains
+      );
+      pin.input!.cursor = 'pointer';
 
       // Pulsing tween for Makkah
       if (loc.type === 'holy_city') {
@@ -265,7 +270,6 @@ export class ArabiaMapScene extends Scene {
       });
 
       pin.on('pointerdown', () => {
-        this.emitParticles(posX, posY);
         EventBus.emit(GAME_EVENTS.LOCATION_SELECTED, loc);
       });
 
@@ -300,23 +304,5 @@ export class ArabiaMapScene extends Scene {
         });
       }
     });
-  }
-
-  private emitParticles(x: number, y: number) {
-    for (let i = 0; i < 10; i++) {
-      const spark = this.add.sprite(x, y, 'particle_sparkle');
-      const angle = Math.random() * Math.PI * 2;
-      const speed = 40 + Math.random() * 60;
-      this.tweens.add({
-        targets: spark,
-        x: x + Math.cos(angle) * speed,
-        y: y + Math.sin(angle) * speed,
-        alpha: 0,
-        scale: 0.2,
-        duration: 600,
-        ease: 'Cubic.easeOut',
-        onComplete: () => spark.destroy()
-      });
-    }
   }
 }

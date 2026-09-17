@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { X, HelpCircle, CheckCircle2, AlertCircle, Award, RotateCcw } from 'lucide-react';
 import { CHAPTER_1_DATA, QuizQuestion } from '../data/chapter1Data';
-import confetti from 'canvas-confetti';
 
 interface QuizModalProps {
   isOpen: boolean;
@@ -66,11 +65,6 @@ export default function QuizModal({
     if (isLastQuestion) {
       setIsCompleted(true);
       onQuizCompleted(score);
-      confetti({
-        particleCount: 120,
-        spread: 90,
-        origin: { y: 0.5 },
-      });
     } else {
       setCurrentIndex((prev) => prev + 1);
       setSelectedOption(null);

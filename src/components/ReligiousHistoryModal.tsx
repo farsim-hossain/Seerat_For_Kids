@@ -49,11 +49,11 @@ export const ReligiousHistoryModal: React.FC<ReligiousHistoryModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fadeIn">
-      <div className="relative w-full max-w-3xl max-h-[90vh] flex flex-col bg-slate-900 border border-amber-500/40 rounded-2xl shadow-2xl overflow-hidden text-slate-100">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-2 sm:p-4 animate-fadeIn">
+      <div className="relative w-full max-w-3xl max-h-[92vh] flex flex-col bg-slate-900 border border-amber-500/40 rounded-2xl shadow-2xl overflow-hidden text-slate-100">
         
         {/* Header Hero Image */}
-        <div className="relative h-48 w-full shrink-0 overflow-hidden">
+        <div className="relative h-36 sm:h-48 w-full shrink-0 overflow-hidden">
           <Image
             src={getImageForStation(stationId)}
             alt={station ? (isBn ? station.nameBn : station.nameEn) : 'Pre-Islamic Heritage'}
@@ -64,27 +64,27 @@ export const ReligiousHistoryModal: React.FC<ReligiousHistoryModalProps> = ({
           
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 bg-slate-900/80 text-white hover:bg-rose-600 rounded-full w-9 h-9 flex items-center justify-center text-lg font-bold border border-white/20 transition-all"
+            className="absolute top-3 right-3 bg-slate-900/80 text-white hover:bg-rose-600 rounded-full w-9 h-9 flex items-center justify-center text-lg font-bold border border-white/20 transition-all z-10"
           >
             ✕
           </button>
 
-          <div className="absolute bottom-4 left-6 right-6">
-            <span className="inline-block px-3 py-1 bg-amber-500/90 text-slate-950 font-bold text-xs rounded-full mb-2 uppercase tracking-wide">
+          <div className="absolute bottom-3 left-4 right-4 sm:left-6 sm:right-6">
+            <span className="inline-block px-2.5 py-0.5 bg-amber-500/90 text-slate-950 font-bold text-[10px] sm:text-xs rounded-full mb-1 sm:mb-2 uppercase tracking-wide">
               {isBn ? 'পর্ব ১.৩ • ধর্ম, সমাজ ও চারিত্রিক সংস্কার' : 'Section 1.3 • Religion, Society & Moral Reform'}
             </span>
-            <h2 className="text-2xl font-extrabold text-amber-200 flex items-center gap-2">
+            <h2 className="text-lg sm:text-2xl font-extrabold text-amber-200 flex items-center gap-2">
               <span>{station?.icon}</span>
-              <span>{station ? (isBn ? station.nameBn : station.nameEn) : ''}</span>
+              <span className="truncate">{station ? (isBn ? station.nameBn : station.nameEn) : ''}</span>
             </h2>
           </div>
         </div>
 
-        {/* Navigation Tabs inside Modal */}
-        <div className="flex border-b border-slate-800 bg-slate-950/60 px-6 gap-2">
+        {/* Navigation Tabs inside Modal (Scrollable on Mobile) */}
+        <div className="flex border-b border-slate-800 bg-slate-950/80 px-3 sm:px-6 gap-1 sm:gap-2 overflow-x-auto no-scrollbar whitespace-nowrap">
           <button
             onClick={() => setActiveTab('station')}
-            className={`py-3 px-4 text-sm font-semibold border-b-2 transition-all ${
+            className={`py-2.5 sm:py-3 px-3 sm:px-4 text-xs sm:text-sm font-semibold border-b-2 transition-all shrink-0 ${
               activeTab === 'station'
                 ? 'border-amber-400 text-amber-300'
                 : 'border-transparent text-slate-400 hover:text-slate-200'
@@ -94,23 +94,23 @@ export const ReligiousHistoryModal: React.FC<ReligiousHistoryModalProps> = ({
           </button>
           <button
             onClick={() => setActiveTab('religions')}
-            className={`py-3 px-4 text-sm font-semibold border-b-2 transition-all ${
+            className={`py-2.5 sm:py-3 px-3 sm:px-4 text-xs sm:text-sm font-semibold border-b-2 transition-all shrink-0 ${
               activeTab === 'religions'
                 ? 'border-amber-400 text-amber-300'
                 : 'border-transparent text-slate-400 hover:text-slate-200'
             }`}
           >
-            {isBn ? '📜 অন্যান্য ধর্মাবলম্বী (ইহুদি, খ্রিষ্টান, অগ্নিপূজারি)' : '📜 Religions in Arabia'}
+            {isBn ? '📜 অন্যান্য ধর্মাবলম্বী' : '📜 Religions in Arabia'}
           </button>
           <button
             onClick={() => setActiveTab('society')}
-            className={`py-3 px-4 text-sm font-semibold border-b-2 transition-all ${
+            className={`py-2.5 sm:py-3 px-3 sm:px-4 text-xs sm:text-sm font-semibold border-b-2 transition-all shrink-0 ${
               activeTab === 'society'
                 ? 'border-amber-400 text-amber-300'
                 : 'border-transparent text-slate-400 hover:text-slate-200'
             }`}
           >
-            {isBn ? '🌟 সামাজিক জীবন ও চারিত্রিক স্তম্ভ' : '🌟 Society & Character Pillars'}
+            {isBn ? '🌟 সমাজ ও চারিত্রিক স্তম্ভ' : '🌟 Society & Character'}
           </button>
         </div>
 

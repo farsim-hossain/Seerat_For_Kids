@@ -372,7 +372,6 @@ export class MakkahJourneyScene extends Scene {
             ? '✨ সুবহানাল্লাহ! যমযমের মিষ্টি পানির ঝরনা প্রবাহিত হলো!'
             : '✨ SubhanAllah! The pure sweet water of Zamzam gushes forth!'
         );
-        EventBus.emit(GAME_EVENTS.CELEBRATE);
       }
     });
 
@@ -388,30 +387,6 @@ export class MakkahJourneyScene extends Scene {
     const basin = this.add.circle(x, y, 42, 0x0284c7, 0.75);
     const innerWater = this.add.circle(x, y, 32, 0x38bdf8, 0.9);
     this.contentContainer?.add([basin, innerWater]);
-
-    // Water droplets particle fountain
-    this.time.addEvent({
-      delay: 150,
-      repeat: 30,
-      callback: () => {
-        if (!this.scene || !this.scene.isActive()) return;
-        for (let i = 0; i < 4; i++) {
-          const drop = this.add.circle(x, y, 3.5, 0xbae6fd, 1);
-          const angle = Math.random() * Math.PI * 2;
-          const speed = 40 + Math.random() * 50;
-
-          this.tweens.add({
-            targets: drop,
-            x: x + Math.cos(angle) * speed,
-            y: y + Math.sin(angle) * speed - 20,
-            alpha: 0,
-            scale: 0.2,
-            duration: 600,
-            onComplete: () => drop.destroy(),
-          });
-        }
-      },
-    });
   }
 
   private animateFlockingBirds(w: number, h: number) {

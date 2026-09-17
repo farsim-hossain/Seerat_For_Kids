@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import confetti from 'canvas-confetti';
 import {
   X,
   Puzzle,
@@ -232,12 +231,6 @@ export default function PuzzleModal({ isOpen, onClose, lang }: PuzzleModalProps)
 
     if (isCorrect) {
       setTimelineSuccess(true);
-      confetti({
-        particleCount: 80,
-        spread: 70,
-        origin: { y: 0.6 },
-        colors: ['#f59e0b', '#10b981', '#3b82f6', '#8b5cf6'],
-      });
       EventBus.emit(GAME_EVENTS.CELEBRATE);
     } else {
       setTimelineSuccess(false);
@@ -259,20 +252,8 @@ export default function PuzzleModal({ isOpen, onClose, lang }: PuzzleModalProps)
       setMatchedPairs(updated);
       setSelectedClan(null);
 
-      confetti({
-        particleCount: 25,
-        spread: 45,
-        origin: { y: 0.7 },
-      });
-
       if (updated.length === MATCHING_PAIRS.length) {
         setMatcherSuccess(true);
-        confetti({
-          particleCount: 100,
-          spread: 80,
-          origin: { y: 0.5 },
-          colors: ['#059669', '#d97706', '#2563eb', '#7c3aed'],
-        });
         EventBus.emit(GAME_EVENTS.CELEBRATE);
       }
     } else {

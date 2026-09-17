@@ -141,10 +141,7 @@ export class DarAlNadwahScene extends Scene {
       });
 
       spot.on('pointerdown', () => {
-        // Particle burst
-        this.emitParticles(st.x, st.y, st.color);
         EventBus.emit(GAME_EVENTS.PORTFOLIO_SELECTED, st.id);
-        EventBus.emit(GAME_EVENTS.CELEBRATE);
       });
     });
 
@@ -168,24 +165,6 @@ export class DarAlNadwahScene extends Scene {
     this.events.once('destroy', cleanup);
 
     EventBus.emit(GAME_EVENTS.SCENE_READY, 'DarAlNadwahScene');
-  }
-
-  private emitParticles(x: number, y: number, color: number) {
-    for (let i = 0; i < 14; i++) {
-      const p = this.add.circle(x, y, 4, color, 1);
-      const angle = (i / 14) * Math.PI * 2;
-      const speed = 60 + Math.random() * 40;
-
-      this.tweens.add({
-        targets: p,
-        x: x + Math.cos(angle) * speed,
-        y: y + Math.sin(angle) * speed,
-        alpha: 0,
-        scale: 0.2,
-        duration: 600,
-        onComplete: () => p.destroy(),
-      });
-    }
   }
 
   private updateLanguage(lang: 'bn' | 'en') {

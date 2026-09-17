@@ -91,7 +91,7 @@ export default function GameContainer({ onSceneReady }: GameContainerProps) {
   }, [onSceneReady]);
 
   return (
-    <div className="relative w-full aspect-[16/9] max-w-5xl mx-auto rounded-2xl overflow-hidden shadow-2xl border-4 border-amber-300/50 bg-slate-900">
+    <div className="relative w-full aspect-[16/9] max-w-5xl mx-auto rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl border-2 sm:border-4 border-amber-300/50 bg-slate-900 touch-manipulation">
       <div ref={containerRef} id="phaser-game" className="w-full h-full" />
     </div>
   );

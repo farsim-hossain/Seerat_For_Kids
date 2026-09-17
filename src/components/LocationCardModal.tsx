@@ -2,7 +2,6 @@
 
 import { LocationPoint } from '../data/chapter1Data';
 import { X, BookOpen, Compass, Award, Sparkles } from 'lucide-react';
-import confetti from 'canvas-confetti';
 
 interface LocationCardModalProps {
   location: LocationPoint | null;
@@ -25,20 +24,15 @@ export default function LocationCardModal({
 
   const handleSave = () => {
     onSaveToJournal(location);
-    confetti({
-      particleCount: 60,
-      spread: 70,
-      origin: { y: 0.6 },
-    });
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
-      <div className="relative w-full max-w-lg bg-gradient-to-b from-amber-50 to-orange-50 border-4 border-amber-400 rounded-3xl p-6 shadow-2xl text-slate-800">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
+      <div className="relative w-full max-w-md sm:max-w-lg max-h-[92vh] overflow-y-auto bg-gradient-to-b from-amber-50 to-orange-50 border-3 sm:border-4 border-amber-400 rounded-3xl p-4 sm:p-6 shadow-2xl text-slate-800">
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-2 bg-amber-200/80 hover:bg-amber-300 text-amber-900 rounded-full transition"
+          className="absolute top-3 right-3 sm:top-4 sm:right-4 p-2 bg-amber-200/80 hover:bg-amber-300 text-amber-900 rounded-full transition z-10"
         >
           <X className="w-5 h-5" />
         </button>

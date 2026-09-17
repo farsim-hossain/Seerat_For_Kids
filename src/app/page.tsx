@@ -18,6 +18,7 @@ import {
   Home,
   Puzzle,
   Scroll,
+  ChevronDown,
 } from 'lucide-react';
 import {
   CHAPTER_1_DATA,
@@ -35,7 +36,6 @@ import DarAlNadwahModal from '../components/DarAlNadwahModal';
 import { ReligiousHistoryModal } from '../components/ReligiousHistoryModal';
 import QuizModal from '../components/QuizModal';
 import PuzzleModal from '../components/PuzzleModal';
-import confetti from 'canvas-confetti';
 
 // Dynamic import with SSR disabled for Phaser canvas
 const GameContainer = dynamic(() => import('../components/GameContainer'), {
@@ -105,11 +105,7 @@ export default function HomePage() {
     };
 
     const handleCelebrate = () => {
-      confetti({
-        particleCount: 50,
-        spread: 60,
-        origin: { y: 0.6 },
-      });
+      // Particle/confetti celebrations disabled per app design guidelines
     };
 
     const handleSceneChanged = (
@@ -225,141 +221,230 @@ export default function HomePage() {
       : CHAPTER_1_DATA.quizzes;
 
   return (
-    <main className="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-6 flex flex-col justify-between min-h-screen">
+    <main className="flex-1 max-w-7xl w-full mx-auto p-2 sm:p-6 flex flex-col justify-between min-h-screen">
       {/* 1. Header Navigation Bar */}
-      <header className="bg-white/95 backdrop-blur-md p-4 sm:px-6 rounded-3xl border-2 border-amber-300 shadow-lg mb-4">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
+      <header className="bg-white/95 backdrop-blur-md p-3 sm:px-6 rounded-2xl sm:rounded-3xl border-2 border-amber-300 shadow-lg mb-3 sm:mb-4">
+        <div className="flex items-center justify-between gap-2 sm:gap-4">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
             {/* Home / Intro Button */}
             <button
               onClick={() => setAppView('intro')}
-              className="p-2.5 rounded-2xl bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 transition shadow-xs"
+              className="p-2 sm:p-2.5 rounded-xl sm:rounded-2xl bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 transition shadow-xs shrink-0"
               title={isBn ? 'মূল পাতায় ফিরে যান' : 'Back to Intro'}
             >
-              <Home className="w-5 h-5" />
+              <Home className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
 
-            <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white shadow-md font-bold text-lg">
+            <div className="w-8 h-8 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white shadow-md font-bold text-sm sm:text-lg shrink-0">
               {isBn ? '১' : '1'}
             </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="bg-amber-100 text-amber-800 text-[11px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+            <div className="min-w-0">
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <span className="bg-amber-100 text-amber-800 text-[10px] sm:text-[11px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider shrink-0">
                   {isBn ? 'অধ্যায় ১' : 'Chapter 1'}
                 </span>
-                <span className="text-xs text-slate-500 hidden sm:inline">
+                <span className="text-[11px] text-slate-500 hidden sm:inline truncate">
                   {isBn ? CHAPTER_1_DATA.meta.sourceBookBn : CHAPTER_1_DATA.meta.sourceBookEn}
                 </span>
               </div>
-              <h1 className="text-lg sm:text-xl font-black text-amber-950 font-bengali">
+              <h1 className="text-sm sm:text-xl font-black text-amber-950 font-bengali leading-tight truncate">
                 {isBn ? CHAPTER_1_DATA.meta.titleBn : CHAPTER_1_DATA.meta.titleEn}
               </h1>
             </div>
           </div>
 
-          {/* Action Buttons & Language Switcher */}
-          <div className="flex items-center flex-wrap gap-2 sm:gap-3">
+          {/* Quick Header Toggles: Language & Audio (Visible on all screens) */}
+          <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
             {/* Language Toggle */}
             <button
               onClick={handleToggleLanguage}
-              className="flex items-center gap-1.5 px-3 py-2 bg-amber-200/80 hover:bg-amber-300 text-amber-950 rounded-xl font-bold text-xs sm:text-sm border border-amber-400 transition shadow-sm"
+              className="flex items-center gap-1 px-2.5 py-1.5 sm:px-3 sm:py-2 bg-amber-200/80 hover:bg-amber-300 text-amber-950 rounded-xl font-bold text-xs sm:text-sm border border-amber-400 transition shadow-xs shrink-0"
               title="Switch Language / ভাষা পরিবর্তন"
             >
-              <Languages className="w-4 h-4 text-amber-800" />
+              <Languages className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-800" />
               <span>{isBn ? 'English' : 'বাংলা'}</span>
             </button>
 
             {/* Audio Toggle */}
             <button
               onClick={() => setAudioMuted(!audioMuted)}
-              className="p-2.5 bg-amber-100/80 hover:bg-amber-200 text-amber-900 rounded-xl transition shadow-sm"
+              className="p-1.5 sm:p-2.5 bg-amber-100/80 hover:bg-amber-200 text-amber-900 rounded-xl transition shadow-xs shrink-0"
               title={audioMuted ? (isBn ? 'শব্দ চালু করুন' : 'Unmute') : (isBn ? 'শব্দ বন্ধ করুন' : 'Mute')}
             >
-              {audioMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+              {audioMuted ? <VolumeX className="w-4 h-4 sm:w-5 sm:h-5" /> : <Volume2 className="w-4 h-4 sm:w-5 sm:h-5" />}
             </button>
 
-            {/* Section 1.1 Action: Lineage Tree Modal */}
-            {activeSection === '1.1' && (
+            {/* Desktop Action Buttons Bar (>= sm) */}
+            <div className="hidden sm:flex items-center gap-2">
+              {/* Section 1.1 Action: Lineage Tree Modal */}
+              {activeSection === '1.1' && (
+                <button
+                  onClick={() => setIsTreeOpen(true)}
+                  className="flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 bg-amber-100/90 hover:bg-amber-200 text-amber-950 rounded-xl font-bold text-xs sm:text-sm border border-amber-300 transition shadow-sm shrink-0"
+                >
+                  <GitFork className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-700" />
+                  <span>{isBn ? 'বংশধারা' : 'Lineage Tree'}</span>
+                </button>
+              )}
+
+              {/* Section 1.2 Action: Dar al-Nadwah Council Modal */}
+              {activeSection === '1.2' && (
+                <button
+                  onClick={() => setIsDarAlNadwahOpen(true)}
+                  className="flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 bg-amber-100/90 hover:bg-amber-200 text-amber-950 rounded-xl font-bold text-xs sm:text-sm border border-amber-300 transition shadow-sm shrink-0"
+                >
+                  <Landmark className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-700" />
+                  <span>{isBn ? 'দারুন নদওয়া' : 'Dar al-Nadwah'}</span>
+                </button>
+              )}
+
+              {/* Section 1.3 Action: Religious History Modal */}
+              {activeSection === '1.3' && (
+                <button
+                  onClick={() => {
+                    setSelectedReligiousStationId('hubal_idols');
+                    setIsReligiousModalOpen(true);
+                  }}
+                  className="flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 bg-amber-100/90 hover:bg-amber-200 text-amber-950 rounded-xl font-bold text-xs sm:text-sm border border-amber-300 transition shadow-sm shrink-0"
+                >
+                  <Scroll className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-700" />
+                  <span>{isBn ? 'ধর্ম ও সমাজ' : 'Religion & Society'}</span>
+                </button>
+              )}
+
+              {/* Interactive Puzzle Hub Button */}
               <button
-                onClick={() => setIsTreeOpen(true)}
-                className="flex items-center gap-2 px-3.5 py-2 bg-amber-100/90 hover:bg-amber-200 text-amber-950 rounded-xl font-bold text-xs sm:text-sm border border-amber-300 transition shadow-sm"
+                onClick={() => setIsPuzzleOpen(true)}
+                className="flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white rounded-xl font-bold text-xs sm:text-sm shadow-md transition shrink-0"
+                title={isBn ? 'ঐতিহাসিক পাজল ও চ্যালেঞ্জ খেলুন' : 'Play History Puzzles & Challenges'}
               >
-                <GitFork className="w-4 h-4 text-amber-700" />
-                <span>{isBn ? 'বংশধারা' : 'Lineage Tree'}</span>
+                <Puzzle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-200" />
+                <span>{isBn ? 'পাজল গেম' : 'Puzzles'}</span>
               </button>
-            )}
 
-            {/* Section 1.2 Action: Dar al-Nadwah Council Modal */}
-            {activeSection === '1.2' && (
+              {/* Quiz Button */}
               <button
-                onClick={() => setIsDarAlNadwahOpen(true)}
-                className="flex items-center gap-2 px-3.5 py-2 bg-amber-100/90 hover:bg-amber-200 text-amber-950 rounded-xl font-bold text-xs sm:text-sm border border-amber-300 transition shadow-sm"
+                onClick={() => setIsQuizOpen(true)}
+                className="flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 bg-emerald-100/90 hover:bg-emerald-200 text-emerald-950 rounded-xl font-bold text-xs sm:text-sm border border-emerald-300 transition shadow-sm shrink-0"
               >
-                <Landmark className="w-4 h-4 text-amber-700" />
-                <span>{isBn ? 'দারুন নদওয়া ও সংসদ' : 'Dar al-Nadwah Council'}</span>
+                <HelpCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-700" />
+                <span>
+                  {isBn
+                    ? `কুইজ (${activeSection === '1.3' ? '১.৩' : activeSection === '1.2' ? '১.২' : '১.১'})`
+                    : `Quiz (${activeSection})`}
+                </span>
               </button>
-            )}
 
-            {/* Section 1.3 Action: Religious History Modal */}
-            {activeSection === '1.3' && (
+              {/* Journal Button */}
               <button
-                onClick={() => {
-                  setSelectedReligiousStationId('hubal_idols');
-                  setIsReligiousModalOpen(true);
-                }}
-                className="flex items-center gap-2 px-3.5 py-2 bg-amber-100/90 hover:bg-amber-200 text-amber-950 rounded-xl font-bold text-xs sm:text-sm border border-amber-300 transition shadow-sm"
+                onClick={() => setIsJournalOpen(true)}
+                className="flex items-center gap-1.5 px-3.5 py-1.5 sm:px-4 sm:py-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white rounded-xl font-bold text-xs sm:text-sm shadow-md transition shrink-0"
               >
-                <Scroll className="w-4 h-4 text-amber-700" />
-                <span>{isBn ? 'ধর্ম ও সমাজ সংস্কার' : 'Religious & Social Reform'}</span>
+                <BookMarked className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                <span>
+                  {isBn ? 'জার্নাল' : 'Journal'} ({discoveredLocations.length})
+                </span>
               </button>
-            )}
-
-            {/* Interactive Puzzle Hub Button */}
-            <button
-              onClick={() => setIsPuzzleOpen(true)}
-              className="flex items-center gap-2 px-3.5 py-2 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white rounded-xl font-bold text-xs sm:text-sm shadow-md transition"
-              title={isBn ? 'ঐতিহাসিক পাজল ও চ্যালেঞ্জ খেলুন' : 'Play History Puzzles & Challenges'}
-            >
-              <Puzzle className="w-4 h-4 text-amber-200" />
-              <span>{isBn ? 'পাজল গেম' : 'Puzzles'}</span>
-            </button>
-
-            {/* Quiz Button */}
-            <button
-              onClick={() => setIsQuizOpen(true)}
-              className="flex items-center gap-2 px-3.5 py-2 bg-emerald-100/90 hover:bg-emerald-200 text-emerald-950 rounded-xl font-bold text-xs sm:text-sm border border-emerald-300 transition shadow-sm"
-            >
-              <HelpCircle className="w-4 h-4 text-emerald-700" />
-              <span>
-                {isBn
-                  ? `কুইজ (${activeSection === '1.3' ? '১.৩' : activeSection === '1.2' ? '১.২' : '১.১'})`
-                  : `Quiz (${activeSection})`}
-              </span>
-            </button>
-
-            {/* Journal Button */}
-            <button
-              onClick={() => setIsJournalOpen(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white rounded-xl font-bold text-xs sm:text-sm shadow-md transition"
-            >
-              <BookMarked className="w-4 h-4" />
-              <span>
-                {isBn ? 'সীরাহ জার্নাল' : 'Journal'} ({discoveredLocations.length})
-              </span>
-            </button>
+            </div>
           </div>
         </div>
 
-        {/* 2. Section Selector Tabs Sub-Bar */}
-        <div className="mt-4 pt-3 border-t border-amber-200/80 flex flex-wrap items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-bold text-amber-900 uppercase tracking-wider font-bengali">
-              {isBn ? 'অধ্যায়ের পর্ব নির্বাচন:' : 'Select Section:'}
+        {/* Mobile 2x2 Quick Tools Grid (< sm) */}
+        <div className="grid grid-cols-2 gap-2 mt-2.5 pt-2 border-t border-amber-200/80 sm:hidden">
+          {/* Section Action */}
+          {activeSection === '1.1' && (
+            <button
+              onClick={() => setIsTreeOpen(true)}
+              className="flex items-center justify-center gap-1.5 px-2.5 py-1.5 bg-amber-100 hover:bg-amber-200 text-amber-950 rounded-xl font-bold text-xs border border-amber-300 transition shadow-xs w-full min-w-0"
+            >
+              <GitFork className="w-3.5 h-3.5 text-amber-700 shrink-0" />
+              <span className="truncate">{isBn ? 'বংশধারা' : 'Lineage Tree'}</span>
+            </button>
+          )}
+          {activeSection === '1.2' && (
+            <button
+              onClick={() => setIsDarAlNadwahOpen(true)}
+              className="flex items-center justify-center gap-1.5 px-2.5 py-1.5 bg-amber-100 hover:bg-amber-200 text-amber-950 rounded-xl font-bold text-xs border border-amber-300 transition shadow-xs w-full min-w-0"
+            >
+              <Landmark className="w-3.5 h-3.5 text-amber-700 shrink-0" />
+              <span className="truncate">{isBn ? 'দারুন নদওয়া' : 'Dar al-Nadwah'}</span>
+            </button>
+          )}
+          {activeSection === '1.3' && (
+            <button
+              onClick={() => {
+                setSelectedReligiousStationId('hubal_idols');
+                setIsReligiousModalOpen(true);
+              }}
+              className="flex items-center justify-center gap-1.5 px-2.5 py-1.5 bg-amber-100 hover:bg-amber-200 text-amber-950 rounded-xl font-bold text-xs border border-amber-300 transition shadow-xs w-full min-w-0"
+            >
+              <Scroll className="w-3.5 h-3.5 text-amber-700 shrink-0" />
+              <span className="truncate">{isBn ? 'ধর্ম ও সমাজ' : 'Religion & Society'}</span>
+            </button>
+          )}
+
+          {/* Puzzle Button */}
+          <button
+            onClick={() => setIsPuzzleOpen(true)}
+            className="flex items-center justify-center gap-1.5 px-2.5 py-1.5 bg-gradient-to-r from-purple-500 to-indigo-600 text-white rounded-xl font-bold text-xs shadow-xs transition w-full min-w-0"
+          >
+            <Puzzle className="w-3.5 h-3.5 text-amber-200 shrink-0" />
+            <span className="truncate">{isBn ? 'পাজল গেম' : 'Puzzles'}</span>
+          </button>
+
+          {/* Quiz Button */}
+          <button
+            onClick={() => setIsQuizOpen(true)}
+            className="flex items-center justify-center gap-1.5 px-2.5 py-1.5 bg-emerald-100 hover:bg-emerald-200 text-emerald-950 rounded-xl font-bold text-xs border border-emerald-300 transition shadow-xs w-full min-w-0"
+          >
+            <HelpCircle className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
+            <span className="truncate">
+              {isBn ? `কুইজ (${activeSection === '1.3' ? '১.৩' : activeSection === '1.2' ? '১.২' : '১.১'})` : `Quiz (${activeSection})`}
             </span>
-            <div className="flex flex-wrap items-center gap-2 bg-amber-100/80 p-1 rounded-xl border border-amber-300">
+          </button>
+
+          {/* Journal Button */}
+          <button
+            onClick={() => setIsJournalOpen(true)}
+            className="flex items-center justify-center gap-1.5 px-2.5 py-1.5 bg-gradient-to-r from-amber-500 to-amber-600 text-white rounded-xl font-bold text-xs shadow-xs transition w-full min-w-0"
+          >
+            <BookMarked className="w-3.5 h-3.5 shrink-0" />
+            <span className="truncate">{isBn ? 'জার্নাল' : 'Journal'} ({discoveredLocations.length})</span>
+          </button>
+        </div>
+
+        {/* 2. Section Selector Sub-Bar (Dropdown on Mobile, Tabs on Desktop) */}
+        <div className="mt-2.5 pt-2 border-t border-amber-200/80 flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            <span className="text-[11px] sm:text-xs font-bold text-amber-900 uppercase tracking-wider font-bengali shrink-0">
+              {isBn ? 'পর্ব:' : 'Section:'}
+            </span>
+
+            {/* Mobile Dropdown Select (< sm) */}
+            <div className="relative flex-1 min-w-0 sm:hidden">
+              <select
+                value={activeSection}
+                onChange={(e) => handleSelectSection(e.target.value as '1.1' | '1.2' | '1.3')}
+                className="w-full bg-gradient-to-r from-amber-600 to-amber-500 text-white font-black text-xs py-2 pl-3 pr-8 rounded-xl border border-amber-400 shadow-sm appearance-none focus:outline-none focus:ring-2 focus:ring-amber-300 truncate font-bengali"
+              >
+                <option value="1.1" className="bg-slate-900 text-white font-semibold">
+                  {isBn ? '📌 পর্ব ১.১: ভূগোল, জাতি ও কাবা' : '📌 1.1: Geography & Ka\'bah'}
+                </option>
+                <option value="1.2" className="bg-slate-900 text-white font-semibold">
+                  {isBn ? '🏛️ পর্ব ১.২: রাজবংশ ও প্রশাসন' : '🏛️ 1.2: Governance'}
+                </option>
+                <option value="1.3" className="bg-slate-900 text-white font-semibold">
+                  {isBn ? '📜 পর্ব ১.৩: ধর্ম ও সমাজ মানচিত্র' : '📜 1.3: Religion & Morals'}
+                </option>
+              </select>
+              <ChevronDown className="w-4 h-4 text-white absolute right-2.5 top-2.5 pointer-events-none" />
+            </div>
+
+            {/* Desktop Tabs (>= sm) */}
+            <div className="hidden sm:flex items-center gap-1.5 sm:gap-2 bg-amber-100/80 p-1 rounded-xl border border-amber-300">
               <button
                 onClick={() => handleSelectSection('1.1')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1 shrink-0 ${
                   activeSection === '1.1'
                     ? 'bg-amber-600 text-white shadow-sm'
                     : 'text-amber-950 hover:bg-amber-200'
@@ -367,13 +452,13 @@ export default function HomePage() {
               >
                 <Compass className="w-3.5 h-3.5" />
                 <span>
-                  {isBn ? 'পর্ব ১.১: ভূগোল ও কাবা' : 'Part 1.1: Geography & Ka\'bah'}
+                  {isBn ? '১.১: ভূগোল ও কাবা' : '1.1: Geography & Ka\'bah'}
                 </span>
               </button>
 
               <button
                 onClick={() => handleSelectSection('1.2')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1 shrink-0 ${
                   activeSection === '1.2'
                     ? 'bg-amber-600 text-white shadow-sm'
                     : 'text-amber-950 hover:bg-amber-200'
@@ -381,13 +466,13 @@ export default function HomePage() {
               >
                 <Landmark className="w-3.5 h-3.5" />
                 <span>
-                  {isBn ? 'পর্ব ১.২: রাজবংশ ও প্রশাসন' : 'Part 1.2: Kingdoms & Governance'}
+                  {isBn ? '১.২: রাজবংশ ও প্রশাসন' : '1.2: Governance'}
                 </span>
               </button>
 
               <button
                 onClick={() => handleSelectSection('1.3')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1 shrink-0 ${
                   activeSection === '1.3'
                     ? 'bg-amber-600 text-white shadow-sm'
                     : 'text-amber-950 hover:bg-amber-200'
@@ -395,7 +480,7 @@ export default function HomePage() {
               >
                 <Scroll className="w-3.5 h-3.5" />
                 <span>
-                  {isBn ? 'পর্ব ১.৩: ধর্ম, সমাজ ও চারিত্রিক মানচিত্র' : 'Part 1.3: Religion & Morals'}
+                  {isBn ? '১.৩: ধর্ম ও চারিত্রিক মানচিত্র' : '1.3: Religion & Morals'}
                 </span>
               </button>
             </div>
@@ -407,16 +492,57 @@ export default function HomePage() {
         </div>
       </header>
 
-      {/* 3. Scene Selector Sub-Bar */}
-      <div className="flex items-center justify-between mb-3 px-2">
-        <div className="flex items-center gap-2 text-xs sm:text-sm font-bold text-amber-900">
-          <Layers className="w-4 h-4 text-amber-600" />
-          <span>{isBn ? 'ইন্টারঅ্যাক্টিভ দৃশ্যপট নির্বাচন:' : 'Choose Interactive Scene:'}</span>
+      {/* 3. Scene Selector Sub-Bar (Dropdown on Mobile, Buttons on Desktop) */}
+      <div className="flex items-center justify-between mb-2 sm:mb-3 px-1 sm:px-2 gap-2 w-full">
+        <div className="flex items-center gap-1.5 text-xs sm:text-sm font-bold text-amber-900 shrink-0">
+          <Layers className="w-4 h-4 text-amber-600 shrink-0" />
+          <span>{isBn ? 'দৃশ্যপট:' : 'Scene:'}</span>
         </div>
 
-        {/* Section 1.1 Scenes */}
+        {/* Mobile Scene Selector Dropdown (< sm) */}
+        <div className="relative flex-1 min-w-0 sm:hidden">
+          <select
+            value={currentScene}
+            onChange={(e) => handleSwitchScene(e.target.value as any)}
+            className="w-full bg-white text-amber-950 font-bold text-xs py-2 pl-3 pr-8 rounded-xl border border-amber-300 shadow-xs appearance-none focus:outline-none focus:ring-2 focus:ring-amber-500 truncate font-bengali"
+          >
+            {activeSection === '1.1' && (
+              <>
+                <option value="ArabiaMapScene" className="bg-slate-900 text-white">
+                  {isBn ? '🧭 ১. আরবের মানচিত্র ও বাণিজ্য' : '🧭 1. Arabia Map & Trade'}
+                </option>
+                <option value="MakkahJourneyScene" className="bg-slate-900 text-white">
+                  {isBn ? '✨ ২. মক্কার উপাখ্যান (৫টি ধাপ)' : '✨ 2. Makkah Story (5 Phases)'}
+                </option>
+              </>
+            )}
+            {activeSection === '1.2' && (
+              <>
+                <option value="ArabiaMapScene" className="bg-slate-900 text-white">
+                  {isBn ? '🧭 ১. আরবের সীমানা' : '🧭 1. Arabia Borders'}
+                </option>
+                <option value="DarAlNadwahScene" className="bg-slate-900 text-white">
+                  {isBn ? '🏛️ ২. দারুন নদওয়া সংসদ' : '🏛️ 2. Dar al-Nadwah Council'}
+                </option>
+              </>
+            )}
+            {activeSection === '1.3' && (
+              <>
+                <option value="ArabiaMapScene" className="bg-slate-900 text-white">
+                  {isBn ? '🧭 ১. আরবের মানচিত্র' : '🧭 1. Arabia Map'}
+                </option>
+                <option value="IdolHistoryScene" className="bg-slate-900 text-white">
+                  {isBn ? '📜 ২. ধর্ম ও নৈতিক দৃশ্যপট' : '📜 2. Religion & Moral Scene'}
+                </option>
+              </>
+            )}
+          </select>
+          <ChevronDown className="w-4 h-4 text-amber-800 absolute right-2.5 top-2.5 pointer-events-none" />
+        </div>
+
+        {/* Desktop Scene Selector Buttons (>= sm) */}
         {activeSection === '1.1' && (
-          <div className="flex gap-2">
+          <div className="hidden sm:flex items-center gap-1.5">
             <button
               onClick={() => handleSwitchScene('ArabiaMapScene')}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 ${
@@ -426,7 +552,7 @@ export default function HomePage() {
               }`}
             >
               <Compass className="w-3.5 h-3.5" />
-              <span>{isBn ? '১. আরবের মানচিত্র ও বাণিজ্য পথ' : '1. Arabia Map & Trade Route'}</span>
+              <span>{isBn ? '১. আরবের মানচিত্র' : '1. Arabia Map'}</span>
             </button>
             <button
               onClick={() => handleSwitchScene('MakkahJourneyScene')}
@@ -437,14 +563,14 @@ export default function HomePage() {
               }`}
             >
               <Sparkles className="w-3.5 h-3.5" />
-              <span>{isBn ? '২. মক্কার ঐতিহাসিক উপাখ্যান (৫টি ধাপ)' : '2. Makkah Story Journey (5 Phases)'}</span>
+              <span>{isBn ? '২. মক্কার উপাখ্যান (৫ ধাপ)' : '2. Makkah Story (5 Phases)'}</span>
             </button>
           </div>
         )}
 
-        {/* Section 1.2 Scenes */}
+        {/* Desktop Section 1.2 Scenes */}
         {activeSection === '1.2' && (
-          <div className="flex gap-2">
+          <div className="hidden sm:flex items-center gap-1.5">
             <button
               onClick={() => handleSwitchScene('ArabiaMapScene')}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 ${
@@ -454,7 +580,7 @@ export default function HomePage() {
               }`}
             >
               <Compass className="w-3.5 h-3.5" />
-              <span>{isBn ? '১. প্রাচীন আরব রাজ্য ও সীমানা' : '1. Ancient Kingdoms & Borders'}</span>
+              <span>{isBn ? '১. আরবের সীমানা' : '1. Arabia Borders'}</span>
             </button>
             <button
               onClick={() => handleSwitchScene('DarAlNadwahScene')}
@@ -465,14 +591,14 @@ export default function HomePage() {
               }`}
             >
               <Landmark className="w-3.5 h-3.5" />
-              <span>{isBn ? '২. দারুন নদওয়া ও মক্কার সংসদ' : '2. Dar al-Nadwah Council'}</span>
+              <span>{isBn ? '২. দারুন নদওয়া সংসদ' : '2. Dar al-Nadwah'}</span>
             </button>
           </div>
         )}
 
-        {/* Section 1.3 Scenes */}
+        {/* Desktop Section 1.3 Scenes */}
         {activeSection === '1.3' && (
-          <div className="flex gap-2">
+          <div className="hidden sm:flex items-center gap-1.5">
             <button
               onClick={() => handleSwitchScene('ArabiaMapScene')}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 ${
@@ -482,7 +608,7 @@ export default function HomePage() {
               }`}
             >
               <Compass className="w-3.5 h-3.5" />
-              <span>{isBn ? '১. প্রাচীন আরবের মানচিত্র' : '1. Arabia Map'}</span>
+              <span>{isBn ? '১. আরবের মানচিত্র' : '1. Arabia Map'}</span>
             </button>
             <button
               onClick={() => handleSwitchScene('IdolHistoryScene')}
@@ -493,7 +619,7 @@ export default function HomePage() {
               }`}
             >
               <Scroll className="w-3.5 h-3.5" />
-              <span>{isBn ? '২. ধর্ম, কুসংস্কার ও নৈতিক সংস্কার দৃশ্যপট' : '2. Religion & Moral Reform Scene'}</span>
+              <span>{isBn ? '২. ধর্ম ও নৈতিক মানচিত্র' : '2. Religion & Moral Scene'}</span>
             </button>
           </div>
         )}
