@@ -771,4 +771,19 @@ Whenever creating or expanding any interactive chapter or section in the app, th
    - Combine high-res artwork backgrounds with rich Phaser interactivity (particle fountain sprays, day-to-night lighting transitions, object interactions, interactive puzzles).
    - Keep text concise, child-friendly, and fully bilingual (Bangla + English).
 
+---
+
+# 13. Mandatory Strict Source Text Extraction Rule
+
+Whenever creating or expanding any chapter, section, interactive scene, quiz, or modal in the app, the agent **MUST strictly follow the exact text extractions derived from the user's provided book screenshots** (located in `chapters/`, e.g. `1a. Arab.md`, `1b. Arab.md`, `1c. Arab.md`).
+
+### Core Requirements:
+1. **Zero External Knowledge Inventions:**
+   - The agent MUST NOT use its own general training knowledge or external assumptions to invent historical facts, dates, quotes, narrations, or interpretations.
+   - All historical narratives, summaries, quizzes, character lessons, and interactive UI content MUST be strictly derived from the exact text extractions of the user's book screenshots.
+
+2. **Strict Source Alignment:**
+   - Extract facts, places, people, concepts, and moral lessons directly from the Markdown extractions created from the uploaded screenshots.
+   - Preserve 100% historical fidelity and alignment with the book *Ar-Raheeq Al-Makhtum*.
+
 
