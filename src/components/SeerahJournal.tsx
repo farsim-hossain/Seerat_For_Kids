@@ -1,12 +1,21 @@
 'use client';
 
-import { X, MapPin, Award, BookMarked, Sparkles, CheckCircle2 } from 'lucide-react';
+import { X, MapPin, Award, BookMarked, Sparkles, CheckCircle2, Scroll, Heart } from 'lucide-react';
 import { LocationPoint, CHAPTER_1_DATA, CHAPTER_1_SECTION_2_DATA } from '../data/chapter1Data';
+import { CHAPTER_2_DATA } from '../data/chapter2Data';
+
+export interface JournalItem {
+  id: string;
+  titleBn: string;
+  titleEn: string;
+  category: string;
+}
 
 interface SeerahJournalProps {
   isOpen: boolean;
   onClose: () => void;
   discoveredLocations: LocationPoint[];
+  chapter2DiscoveredStations?: JournalItem[];
   tribesLearned: string[];
   quizPassed: boolean;
   score: number;
@@ -17,6 +26,7 @@ export default function SeerahJournal({
   isOpen,
   onClose,
   discoveredLocations,
+  chapter2DiscoveredStations = [],
   tribesLearned,
   quizPassed,
   score,
@@ -27,18 +37,15 @@ export default function SeerahJournal({
   const isBn = lang === 'bn';
   const totalLocations = CHAPTER_1_DATA.locations.length + CHAPTER_1_SECTION_2_DATA.locations.length;
   const totalTribes = CHAPTER_1_DATA.tribes.length;
-  const progressPercent = Math.min(
-    100,
-    Math.round(
-      ((discoveredLocations.length + tribesLearned.length + (quizPassed ? 2 : 0)) /
-        (totalLocations + totalTribes + 2)) *
-        100
-    )
-  );
+  const totalChapter2Stations = CHAPTER_2_DATA.stations.length;
+
+  const totalPossible = totalLocations + totalTribes + totalChapter2Stations + 2;
+  const totalEarned = discoveredLocations.length + tribesLearned.length + chapter2DiscoveredStations.length + (quizPassed ? 2 : 0);
+  const progressPercent = Math.min(100, Math.round((totalEarned / totalPossible) * 100));
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-end bg-black/50 backdrop-blur-sm animate-fadeIn">
-      <div className="relative w-full max-w-md h-full bg-gradient-to-b from-amber-50 via-orange-50 to-amber-100 border-l-4 border-amber-500 shadow-2xl p-6 overflow-y-auto flex flex-col justify-between text-slate-800">
+      <div className="relative w-full max-w-md h-full bg-gradient-to-b from-amber-50 via-orange-50 to-amber-100 border-l-4 border-amber-500 shadow-2xl p-6 overflow-y-auto flex flex-col justify-between text-slate-800 font-bengali">
         <div>
           {/* Header */}
           <div className="flex items-center justify-between pb-4 border-b border-amber-300">
@@ -47,11 +54,11 @@ export default function SeerahJournal({
                 <BookMarked className="w-6 h-6" />
               </div>
               <div>
-                <h2 className="text-xl font-bold text-amber-950 font-bengali">
+                <h2 className="text-xl font-bold text-amber-950">
                   {isBn ? 'আমার সীরাহ জার্নাল' : 'My Seerah Journal'}
                 </h2>
                 <p className="text-xs font-semibold text-amber-700 tracking-wide uppercase">
-                  {isBn ? 'সীরাহ অভিযাত্রা • ১ম অধ্যায়' : 'Seerah Journey • Chapter 1'}
+                  {isBn ? 'সীরাহ অভিযাত্রা • ১ম ও ২য় অধ্যায়' : 'Seerah Journey • Chapters 1 & 2'}
                 </p>
               </div>
             </div>
@@ -66,7 +73,7 @@ export default function SeerahJournal({
           {/* Progress Overview Bar */}
           <div className="my-5 bg-white/90 border border-amber-200 p-4 rounded-2xl shadow-sm">
             <div className="flex justify-between items-center mb-2 text-sm font-bold text-amber-950">
-              <span>{isBn ? 'অধ্যায় অগ্রগতি (Journey Progress)' : 'Chapter Progress'}</span>
+              <span>{isBn ? 'সামগ্রিক অগ্রগতি (Total Progress)' : 'Overall Progress'}</span>
               <span className="text-amber-600">{progressPercent}%</span>
             </div>
             <div className="w-full bg-amber-100 h-3 rounded-full overflow-hidden">
@@ -78,30 +85,63 @@ export default function SeerahJournal({
           </div>
 
           {/* Stats Grid */}
-          <div className="grid grid-cols-2 gap-3 mb-6">
-            <div className="bg-amber-100/80 border border-amber-300 p-3 rounded-xl flex items-center gap-3">
-              <MapPin className="w-6 h-6 text-amber-600" />
-              <div>
-                <div className="text-xl font-extrabold text-amber-950">
-                  {discoveredLocations.length} / {totalLocations}
-                </div>
-                <div className="text-xs text-amber-800 font-medium">
-                  {isBn ? 'আবিষ্কৃত স্থান' : 'Places Discovered'}
-                </div>
+          <div className="grid grid-cols-3 gap-2 mb-6">
+            <div className="bg-amber-100/80 border border-amber-300 p-2.5 rounded-xl flex flex-col items-center text-center">
+              <MapPin className="w-5 h-5 text-amber-600 mb-1" />
+              <div className="text-base font-extrabold text-amber-950">
+                {discoveredLocations.length} / {totalLocations}
+              </div>
+              <div className="text-[10px] text-amber-800 font-medium">
+                {isBn ? '১ম অধ্যায় স্থান' : 'Ch. 1 Places'}
               </div>
             </div>
-            <div className="bg-emerald-100/80 border border-emerald-300 p-3 rounded-xl flex items-center gap-3">
-              <Sparkles className="w-6 h-6 text-emerald-600" />
-              <div>
-                <div className="text-xl font-extrabold text-emerald-950">
-                  {tribesLearned.length} / {totalTribes}
-                </div>
-                <div className="text-xs text-emerald-800 font-medium">
-                  {isBn ? 'গোত্রধারা অন্বেষণ' : 'Tribal Branches'}
-                </div>
+
+            <div className="bg-emerald-100/80 border border-emerald-300 p-2.5 rounded-xl flex flex-col items-center text-center">
+              <Sparkles className="w-5 h-5 text-emerald-600 mb-1" />
+              <div className="text-base font-extrabold text-emerald-950">
+                {tribesLearned.length} / {totalTribes}
+              </div>
+              <div className="text-[10px] text-emerald-800 font-medium">
+                {isBn ? 'গোত্রধারা' : 'Tribes'}
+              </div>
+            </div>
+
+            <div className="bg-orange-100/80 border border-orange-300 p-2.5 rounded-xl flex flex-col items-center text-center">
+              <Scroll className="w-5 h-5 text-orange-600 mb-1" />
+              <div className="text-base font-extrabold text-orange-950">
+                {chapter2DiscoveredStations.length} / {totalChapter2Stations}
+              </div>
+              <div className="text-[10px] text-orange-800 font-medium">
+                {isBn ? '২য় অধ্যায় পর্ব' : 'Ch. 2 Stations'}
               </div>
             </div>
           </div>
+
+          {/* Chapter 2 Badges */}
+          {chapter2DiscoveredStations.length > 0 && (
+            <div className="mb-5">
+              <h3 className="text-sm font-bold text-orange-900 mb-2 flex items-center gap-2">
+                <Scroll className="w-4 h-4 text-orange-600" />
+                <span>{isBn ? '২য় অধ্যায়ের অর্জিত জ্ঞান কার্ডসমূহ:' : 'Chapter 2 Knowledge Cards:'}</span>
+              </h3>
+              <div className="space-y-1.5">
+                {chapter2DiscoveredStations.map((item) => (
+                  <div
+                    key={item.id}
+                    className="flex items-center justify-between p-2.5 bg-white border border-orange-200 rounded-xl text-xs font-semibold text-slate-800 shadow-xs"
+                  >
+                    <div className="flex items-center gap-2">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                      <span>{isBn ? item.titleBn : item.titleEn}</span>
+                    </div>
+                    <span className="bg-orange-100 text-orange-900 text-[10px] px-2 py-0.5 rounded-full shrink-0">
+                      {isBn ? 'অধ্যায় ২' : 'Ch 2'}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Discovered Locations Badges */}
           <div className="mb-6">
@@ -137,45 +177,32 @@ export default function SeerahJournal({
 
           {/* Moral Lesson Cards */}
           <div className="space-y-3 mb-4">
+            <div className="bg-gradient-to-r from-red-50 to-orange-50 border border-orange-300 p-3.5 rounded-2xl shadow-sm">
+              <div className="text-[11px] font-bold text-orange-800 uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                <Heart className="w-4 h-4 text-red-600" />
+                <span>{isBn ? '২য় অধ্যায়ের শিক্ষা: আনুগত্য, প্রতিশ্রুতি ও তাকদির' : 'Ch. 2 Lesson: Obedience & Destiny'}</span>
+              </div>
+              <div className="text-sm font-extrabold text-orange-950 mb-1">
+                {isBn ? 'পিতামাতার আনুগত্য, প্রতিশ্রুতি রক্ষা ও আল্লাহর কুদরতে বিশ্বাস' : 'Filial Piety, Keeping Covenants & Trust in God'}
+              </div>
+              <p className="text-xs text-orange-900 leading-relaxed">
+                {isBn
+                  ? 'আবদুল্লাহর পিতার প্রতি পরম আনুগত্য এবং আল্লাহর কুদরতে কাবার অলৌকিক সুরক্ষা আমাদের শেখায় সংকটের মুহূর্তে সৎ চরিত্র ও আল্লাহর ওপর অবিচল ভরসা রাখা।'
+                  : 'Abdullah’s unquestioning filial devotion and the miraculous preservation of the Ka’bah teach us steadfast moral character and absolute reliance on Allah.'}
+              </p>
+            </div>
+
             <div className="bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-300 p-3.5 rounded-2xl shadow-sm">
               <div className="text-[11px] font-bold text-emerald-800 uppercase tracking-wider mb-1">
                 🌟 {isBn ? 'পর্ব ১.১ এর শিক্ষা: তাওয়াক্কুল (আল্লাহর ওপর ভরসা)' : 'Part 1.1: Tawakkul (Trust in Allah)'}
               </div>
-              <div className="text-sm font-extrabold text-emerald-950 mb-1 font-bengali">
+              <div className="text-sm font-extrabold text-emerald-950 mb-1">
                 {isBn ? CHAPTER_1_DATA.moralLesson.traitBn : CHAPTER_1_DATA.moralLesson.traitEn}
               </div>
               <p className="text-xs text-emerald-900 leading-relaxed">
                 {isBn
                   ? CHAPTER_1_DATA.moralLesson.storyContextBn
                   : CHAPTER_1_DATA.moralLesson.storyContextEn}
-              </p>
-            </div>
-
-            <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-300 p-3.5 rounded-2xl shadow-sm">
-              <div className="text-[11px] font-bold text-amber-800 uppercase tracking-wider mb-1">
-                👑 {isBn ? 'পর্ব ১.২ এর শিক্ষা: আমানতদারী ও সেবামূলক নেতৃত্ব' : 'Part 1.2: Servant Leadership & Trust'}
-              </div>
-              <div className="text-sm font-extrabold text-amber-950 mb-1 font-bengali">
-                {isBn ? CHAPTER_1_SECTION_2_DATA.moralLesson.traitBn : CHAPTER_1_SECTION_2_DATA.moralLesson.traitEn}
-              </div>
-              <p className="text-xs text-amber-900 leading-relaxed">
-                {isBn
-                  ? CHAPTER_1_SECTION_2_DATA.moralLesson.storyContextBn
-                  : CHAPTER_1_SECTION_2_DATA.moralLesson.storyContextEn}
-              </p>
-            </div>
-
-            <div className="bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-300 p-3.5 rounded-2xl shadow-sm">
-              <div className="text-[11px] font-bold text-purple-800 uppercase tracking-wider mb-1">
-                🏺 {isBn ? 'পর্ব ১.৩ এর শিক্ষা: তাওহীদের সুরক্ষা ও ৪ মহৎ স্বভাব' : 'Part 1.3: Monotheism & Noble Character'}
-              </div>
-              <div className="text-sm font-extrabold text-purple-950 mb-1 font-bengali">
-                {isBn ? 'তাওহীদ, সত্যবাদিতা, ওয়াদা রক্ষা ও অসীম দানশীলতা' : 'Pure Monotheism, Truthfulness & Generosity'}
-              </div>
-              <p className="text-xs text-purple-900 leading-relaxed">
-                {isBn
-                  ? 'মূর্তিপূজা ও কুসংস্কারের পঙ্কিলতা পরিহার করে বিশুদ্ধ একত্ববাদ প্রতিষ্ঠা করা এবং মানবীয় মহৎ গুণাবলী দিয়ে সমাজ পুনর্গঠন।'
-                  : 'Rejecting idolatry and superstitions while upholding pure monotheism, honesty, covenant-keeping, and noble character.'}
               </p>
             </div>
           </div>

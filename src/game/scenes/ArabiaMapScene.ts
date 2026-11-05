@@ -3,7 +3,7 @@ import { EventBus, GAME_EVENTS, currentAppLanguage, currentAppSection } from '..
 import { CHAPTER_1_DATA, CHAPTER_1_SECTION_2_DATA, LocationPoint } from '../../data/chapter1Data';
 
 export class ArabiaMapScene extends Scene {
-  private currentSection: '1.1' | '1.2' | '1.3' = currentAppSection;
+  private currentSection: '1.1' | '1.2' | '1.3' | '2.1' = currentAppSection;
   private caravanPathPoints: { x: number; y: number }[] = [];
   private caravanIndex = 0;
   private caravanSprite?: GameObjects.Sprite;
@@ -57,7 +57,7 @@ export class ArabiaMapScene extends Scene {
       this.updateLanguageStrings(lang);
     };
 
-    const onSwitchSection = (sec: '1.1' | '1.2' | '1.3') => {
+    const onSwitchSection = (sec: '1.1' | '1.2' | '1.3' | '2.1') => {
       if (this.currentSection !== sec) {
         this.currentSection = sec;
         this.refreshMarkers();

@@ -19,6 +19,7 @@ import {
   Puzzle,
   Scroll,
   ChevronDown,
+  Award,
 } from 'lucide-react';
 import {
   CHAPTER_1_DATA,
@@ -27,13 +28,15 @@ import {
   SECTIONS_META,
   LocationPoint,
 } from '../data/chapter1Data';
-import { EventBus, GAME_EVENTS, setAppLanguage, setAppSection } from '../game/EventBus';
+import { CHAPTER_2_DATA } from '../data/chapter2Data';
+import { EventBus, GAME_EVENTS, setAppLanguage, setAppSection, setAppChapter } from '../game/EventBus';
 import IntroScreen from '../components/IntroScreen';
 import LocationCardModal from '../components/LocationCardModal';
-import SeerahJournal from '../components/SeerahJournal';
+import SeerahJournal, { JournalItem } from '../components/SeerahJournal';
 import LineageTreeModal from '../components/LineageTreeModal';
 import DarAlNadwahModal from '../components/DarAlNadwahModal';
 import { ReligiousHistoryModal } from '../components/ReligiousHistoryModal';
+import Chapter2DetailModal from '../components/Chapter2DetailModal';
 import QuizModal from '../components/QuizModal';
 import PuzzleModal from '../components/PuzzleModal';
 
@@ -54,22 +57,31 @@ export default function HomePage() {
   // Navigation View: 'intro' | 'chapter'
   const [appView, setAppView] = useState<'intro' | 'chapter'>('intro');
 
-  // Active Section: '1.1' | '1.2' | '1.3'
-  const [activeSection, setActiveSection] = useState<'1.1' | '1.2' | '1.3'>('1.1');
+  // Active Chapter: 1 | 2
+  const [activeChapter, setActiveChapter] = useState<1 | 2>(1);
+
+  // Active Section: '1.1' | '1.2' | '1.3' | '2.1'
+  const [activeSection, setActiveSection] = useState<'1.1' | '1.2' | '1.3' | '2.1'>('1.1');
 
   // Global Language
   const [lang, setLang] = useState<'bn' | 'en'>('bn');
 
-  // Interactive Game Data State
+  // Interactive Game Data State (Chapter 1)
   const [selectedLocation, setSelectedLocation] = useState<LocationPoint | null>(null);
   const [discoveredLocations, setDiscoveredLocations] = useState<LocationPoint[]>([]);
   const [learnedTribes, setLearnedTribes] = useState<string[]>([]);
   const [quizScore, setQuizScore] = useState<number>(0);
   const [quizPassed, setQuizPassed] = useState<boolean>(false);
 
+  // Chapter 2 State
+  const [selectedChapter2StationId, setSelectedChapter2StationId] = useState<string | null>(null);
+  const [isChapter2ModalOpen, setIsChapter2ModalOpen] = useState(false);
+  const [chapter2DiscoveredStations, setChapter2DiscoveredStations] = useState<JournalItem[]>([]);
+
   // Modal Controls
   const [isJournalOpen, setIsJournalOpen] = useState(false);
   const [isTreeOpen, setIsTreeOpen] = useState(false);
+  const [treeDefaultTab, setTreeDefaultTab] = useState<'groups' | 'prophet_lineage' | 'ancestors_21'>('groups');
   const [isDarAlNadwahOpen, setIsDarAlNadwahOpen] = useState(false);
   const [selectedPortfolioId, setSelectedPortfolioId] = useState<string | null>(null);
   
@@ -82,7 +94,13 @@ export default function HomePage() {
 
   // Active scene mode in Phaser
   const [currentScene, setCurrentScene] = useState<
-    'ArabiaMapScene' | 'ZamzamScene' | 'DarAlNadwahScene' | 'MakkahJourneyScene' | 'IdolHistoryScene'
+    | 'ArabiaMapScene'
+    | 'ZamzamScene'
+    | 'DarAlNadwahScene'
+    | 'MakkahJourneyScene'
+    | 'IdolHistoryScene'
+    | 'FamilyLineageScene'
+    | 'ElephantArmyScene'
   >('ArabiaMapScene');
   const [audioMuted, setAudioMuted] = useState(false);
 
@@ -104,24 +122,29 @@ export default function HomePage() {
       setIsReligiousModalOpen(true);
     };
 
-    const handleCelebrate = () => {
-      // Particle/confetti celebrations disabled per app design guidelines
+    const handleChapter2StationSelect = (stationId: string) => {
+      setSelectedChapter2StationId(stationId);
+      setIsChapter2ModalOpen(true);
     };
 
-    const handleSceneChanged = (
-      sceneName:
-        | 'ArabiaMapScene'
-        | 'ZamzamScene'
-        | 'DarAlNadwahScene'
-        | 'MakkahJourneyScene'
-        | 'IdolHistoryScene'
-    ) => {
+    const handleLineageNodeSelect = () => {
+      setTreeDefaultTab('ancestors_21');
+      setIsTreeOpen(true);
+    };
+
+    const handleCelebrate = () => {
+      // Celebrations disabled per design rules
+    };
+
+    const handleSceneChanged = (sceneName: any) => {
       setCurrentScene(sceneName);
     };
 
     EventBus.on(GAME_EVENTS.LOCATION_SELECTED, handleLocationSelect);
     EventBus.on(GAME_EVENTS.PORTFOLIO_SELECTED, handlePortfolioSelect);
     EventBus.on(GAME_EVENTS.RELIGIOUS_STATION_SELECTED, handleReligiousStationSelect);
+    EventBus.on(GAME_EVENTS.CHAPTER2_STATION_SELECTED, handleChapter2StationSelect);
+    EventBus.on(GAME_EVENTS.LINEAGE_NODE_SELECTED, handleLineageNodeSelect);
     EventBus.on(GAME_EVENTS.CELEBRATE, handleCelebrate);
     EventBus.on(GAME_EVENTS.SCENE_CHANGED, handleSceneChanged);
 
@@ -129,6 +152,8 @@ export default function HomePage() {
       EventBus.removeListener(GAME_EVENTS.LOCATION_SELECTED, handleLocationSelect);
       EventBus.removeListener(GAME_EVENTS.PORTFOLIO_SELECTED, handlePortfolioSelect);
       EventBus.removeListener(GAME_EVENTS.RELIGIOUS_STATION_SELECTED, handleReligiousStationSelect);
+      EventBus.removeListener(GAME_EVENTS.CHAPTER2_STATION_SELECTED, handleChapter2StationSelect);
+      EventBus.removeListener(GAME_EVENTS.LINEAGE_NODE_SELECTED, handleLineageNodeSelect);
       EventBus.removeListener(GAME_EVENTS.CELEBRATE, handleCelebrate);
       EventBus.removeListener(GAME_EVENTS.SCENE_CHANGED, handleSceneChanged);
     };
@@ -146,44 +171,60 @@ export default function HomePage() {
     }
   };
 
+  const handleChapter2SaveToJournal = (item: JournalItem) => {
+    if (!chapter2DiscoveredStations.some((st) => st.id === item.id)) {
+      setChapter2DiscoveredStations((prev) => [...prev, item]);
+    }
+  };
+
   const handleTribeLearned = (tribeId: string) => {
     if (!learnedTribes.includes(tribeId)) {
       setLearnedTribes((prev) => [...prev, tribeId]);
     }
   };
 
-  const handleSwitchScene = (
-    sceneName:
-      | 'ArabiaMapScene'
-      | 'ZamzamScene'
-      | 'DarAlNadwahScene'
-      | 'MakkahJourneyScene'
-      | 'IdolHistoryScene'
-  ) => {
+  const handleSwitchScene = (sceneName: any) => {
     setCurrentScene(sceneName);
     EventBus.emit(GAME_EVENTS.SWITCH_SCENE, sceneName);
   };
 
-  const handleSelectSection = (sectionId: '1.1' | '1.2' | '1.3') => {
+  const handleSwitchChapter = (chapterNum: 1 | 2) => {
+    setActiveChapter(chapterNum);
+    setAppChapter(chapterNum);
+
+    if (chapterNum === 1) {
+      setActiveSection('1.1');
+      setAppSection('1.1');
+      setCurrentScene('ArabiaMapScene');
+      EventBus.emit(GAME_EVENTS.SWITCH_SCENE, 'ArabiaMapScene');
+    } else {
+      setActiveSection('2.1');
+      setAppSection('2.1');
+      setCurrentScene('FamilyLineageScene');
+      EventBus.emit(GAME_EVENTS.SWITCH_SCENE, 'FamilyLineageScene');
+    }
+  };
+
+  const handleSelectSection = (sectionId: '1.1' | '1.2' | '1.3' | '2.1') => {
     setActiveSection(sectionId);
     setAppSection(sectionId);
 
-    // Switch scene if switching between sections to avoid scene mismatch
-    if (sectionId === '1.1' && (currentScene === 'DarAlNadwahScene' || currentScene === 'IdolHistoryScene')) {
-      setCurrentScene('ArabiaMapScene');
-      EventBus.emit(GAME_EVENTS.SWITCH_SCENE, 'ArabiaMapScene');
-    } else if (
-      sectionId === '1.2' &&
-      (currentScene === 'ZamzamScene' || currentScene === 'MakkahJourneyScene' || currentScene === 'IdolHistoryScene')
-    ) {
-      setCurrentScene('ArabiaMapScene');
-      EventBus.emit(GAME_EVENTS.SWITCH_SCENE, 'ArabiaMapScene');
-    } else if (
-      sectionId === '1.3' &&
-      (currentScene === 'ZamzamScene' || currentScene === 'MakkahJourneyScene' || currentScene === 'DarAlNadwahScene')
-    ) {
-      setCurrentScene('ArabiaMapScene');
-      EventBus.emit(GAME_EVENTS.SWITCH_SCENE, 'ArabiaMapScene');
+    if (sectionId === '2.1') {
+      setActiveChapter(2);
+      setCurrentScene('FamilyLineageScene');
+      EventBus.emit(GAME_EVENTS.SWITCH_SCENE, 'FamilyLineageScene');
+    } else {
+      setActiveChapter(1);
+      if (sectionId === '1.1' && (currentScene === 'DarAlNadwahScene' || currentScene === 'IdolHistoryScene' || currentScene === 'FamilyLineageScene' || currentScene === 'ElephantArmyScene')) {
+        setCurrentScene('ArabiaMapScene');
+        EventBus.emit(GAME_EVENTS.SWITCH_SCENE, 'ArabiaMapScene');
+      } else if (sectionId === '1.2') {
+        setCurrentScene('ArabiaMapScene');
+        EventBus.emit(GAME_EVENTS.SWITCH_SCENE, 'ArabiaMapScene');
+      } else if (sectionId === '1.3') {
+        setCurrentScene('ArabiaMapScene');
+        EventBus.emit(GAME_EVENTS.SWITCH_SCENE, 'ArabiaMapScene');
+      }
     }
   };
 
@@ -194,11 +235,19 @@ export default function HomePage() {
         <IntroScreen
           lang={lang}
           onToggleLang={handleToggleLanguage}
-          onStartJourney={(secId) => {
-            const targetSec = secId || '1.1';
-            setActiveSection(targetSec);
-            setAppSection(targetSec);
-            setCurrentScene('ArabiaMapScene');
+          onStartJourney={(chapter = 1, secId) => {
+            if (chapter === 2) {
+              setActiveChapter(2);
+              setActiveSection('2.1');
+              setAppSection('2.1');
+              setCurrentScene('FamilyLineageScene');
+            } else {
+              const targetSec = (secId as any) || '1.1';
+              setActiveChapter(1);
+              setActiveSection(targetSec);
+              setAppSection(targetSec);
+              setCurrentScene('ArabiaMapScene');
+            }
             setAppView('chapter');
           }}
         />
@@ -206,22 +255,44 @@ export default function HomePage() {
     );
   }
 
-  const activeSectionMeta =
-    activeSection === '1.3'
-      ? CHAPTER_1_SECTION_3_DATA.meta
+  const currentSourceBookBn =
+    activeChapter === 2
+      ? CHAPTER_2_DATA.meta.sourceBookBn
+      : CHAPTER_1_DATA.meta.sourceBookBn;
+  const currentSourceBookEn =
+    activeChapter === 2
+      ? CHAPTER_2_DATA.meta.sourceBookEn
+      : CHAPTER_1_DATA.meta.sourceBookEn;
+
+  const currentTaglineBn =
+    activeChapter === 2
+      ? CHAPTER_2_DATA.meta.taglineBn
+      : activeSection === '1.3'
+      ? CHAPTER_1_SECTION_3_DATA.meta.taglineBn
       : activeSection === '1.2'
-      ? SECTIONS_META[1]
-      : SECTIONS_META[0];
+      ? SECTIONS_META[1].taglineBn
+      : SECTIONS_META[0].taglineBn;
+
+  const currentTaglineEn =
+    activeChapter === 2
+      ? CHAPTER_2_DATA.meta.taglineEn
+      : activeSection === '1.3'
+      ? CHAPTER_1_SECTION_3_DATA.meta.taglineEn
+      : activeSection === '1.2'
+      ? SECTIONS_META[1].taglineEn
+      : SECTIONS_META[0].taglineEn;
 
   const activeQuizQuestions =
-    activeSection === '1.3'
+    activeChapter === 2
+      ? CHAPTER_2_DATA.quizzes
+      : activeSection === '1.3'
       ? CHAPTER_1_SECTION_3_DATA.quizzes
       : activeSection === '1.2'
       ? CHAPTER_1_SECTION_2_DATA.quizzes
       : CHAPTER_1_DATA.quizzes;
 
   return (
-    <main className="flex-1 max-w-7xl w-full mx-auto p-2 sm:p-6 flex flex-col justify-between min-h-screen">
+    <main className="flex-1 max-w-7xl w-full mx-auto p-2 sm:p-6 flex flex-col justify-between min-h-screen font-bengali">
       {/* 1. Header Navigation Bar */}
       <header className="bg-white/95 backdrop-blur-md p-3 sm:px-6 rounded-2xl sm:rounded-3xl border-2 border-amber-300 shadow-lg mb-3 sm:mb-4">
         <div className="flex items-center justify-between gap-2 sm:gap-4">
@@ -235,26 +306,62 @@ export default function HomePage() {
               <Home className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
 
-            <div className="w-8 h-8 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white shadow-md font-bold text-sm sm:text-lg shrink-0">
-              {isBn ? '১' : '1'}
+            {/* Chapter Badge */}
+            <div className={`w-8 h-8 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl text-white flex items-center justify-center shadow-md font-bold text-sm sm:text-lg shrink-0 ${
+              activeChapter === 2
+                ? 'bg-gradient-to-br from-orange-600 to-red-600'
+                : 'bg-gradient-to-br from-amber-500 to-orange-600'
+            }`}>
+              {isBn ? (activeChapter === 2 ? '২' : '১') : activeChapter}
             </div>
+
             <div className="min-w-0">
               <div className="flex items-center gap-1.5 sm:gap-2">
-                <span className="bg-amber-100 text-amber-800 text-[10px] sm:text-[11px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider shrink-0">
-                  {isBn ? 'অধ্যায় ১' : 'Chapter 1'}
+                <span className={`text-[10px] sm:text-[11px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider shrink-0 ${
+                  activeChapter === 2
+                    ? 'bg-orange-100 text-orange-900'
+                    : 'bg-amber-100 text-amber-800'
+                }`}>
+                  {isBn ? `অধ্যায় ${activeChapter === 2 ? '২' : '১'}` : `Chapter ${activeChapter}`}
                 </span>
                 <span className="text-[11px] text-slate-500 hidden sm:inline truncate">
-                  {isBn ? CHAPTER_1_DATA.meta.sourceBookBn : CHAPTER_1_DATA.meta.sourceBookEn}
+                  {isBn ? currentSourceBookBn : currentSourceBookEn}
                 </span>
               </div>
-              <h1 className="text-sm sm:text-xl font-black text-amber-950 font-bengali leading-tight truncate">
-                {isBn ? CHAPTER_1_DATA.meta.titleBn : CHAPTER_1_DATA.meta.titleEn}
+              <h1 className="text-sm sm:text-xl font-black text-amber-950 leading-tight truncate">
+                {activeChapter === 2
+                  ? (isBn ? CHAPTER_2_DATA.meta.titleBn : CHAPTER_2_DATA.meta.titleEn)
+                  : (isBn ? CHAPTER_1_DATA.meta.titleBn : CHAPTER_1_DATA.meta.titleEn)}
               </h1>
             </div>
           </div>
 
-          {/* Quick Header Toggles: Language & Audio (Visible on all screens) */}
+          {/* Quick Header Toggles: Chapter Switcher, Language & Audio */}
           <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
+            {/* Direct Chapter Switcher Pills */}
+            <div className="flex items-center bg-amber-100/90 p-1 rounded-xl border border-amber-300">
+              <button
+                onClick={() => handleSwitchChapter(1)}
+                className={`px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg text-xs font-black transition flex items-center gap-1 shrink-0 ${
+                  activeChapter === 1
+                    ? 'bg-amber-600 text-white shadow-xs'
+                    : 'text-amber-950 hover:bg-amber-200'
+                }`}
+              >
+                <span>{isBn ? 'অধ্যায় ১' : 'Ch. 1'}</span>
+              </button>
+              <button
+                onClick={() => handleSwitchChapter(2)}
+                className={`px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg text-xs font-black transition flex items-center gap-1 shrink-0 ${
+                  activeChapter === 2
+                    ? 'bg-orange-600 text-white shadow-xs'
+                    : 'text-amber-950 hover:bg-amber-200'
+                }`}
+              >
+                <span>{isBn ? 'অধ্যায় ২' : 'Ch. 2'}</span>
+              </button>
+            </div>
+
             {/* Language Toggle */}
             <button
               onClick={handleToggleLanguage}
@@ -276,19 +383,34 @@ export default function HomePage() {
 
             {/* Desktop Action Buttons Bar (>= sm) */}
             <div className="hidden sm:flex items-center gap-2">
-              {/* Section 1.1 Action: Lineage Tree Modal */}
-              {activeSection === '1.1' && (
+              {/* Lineage Tree Modal Button (Available in both Ch1 & Ch2) */}
+              <button
+                onClick={() => {
+                  setTreeDefaultTab(activeChapter === 2 ? 'ancestors_21' : 'groups');
+                  setIsTreeOpen(true);
+                }}
+                className="flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 bg-amber-100/90 hover:bg-amber-200 text-amber-950 rounded-xl font-bold text-xs sm:text-sm border border-amber-300 transition shadow-sm shrink-0"
+              >
+                <GitFork className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-700" />
+                <span>{isBn ? (activeChapter === 2 ? '২১ পুরুষ নসব' : 'বংশধারা') : (activeChapter === 2 ? '21 Ancestors' : 'Lineage Tree')}</span>
+              </button>
+
+              {/* Chapter 2 Action: Stations Modal */}
+              {activeChapter === 2 && (
                 <button
-                  onClick={() => setIsTreeOpen(true)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 bg-amber-100/90 hover:bg-amber-200 text-amber-950 rounded-xl font-bold text-xs sm:text-sm border border-amber-300 transition shadow-sm shrink-0"
+                  onClick={() => {
+                    setSelectedChapter2StationId('hashim_generosity');
+                    setIsChapter2ModalOpen(true);
+                  }}
+                  className="flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 bg-orange-100/90 hover:bg-orange-200 text-orange-950 rounded-xl font-bold text-xs sm:text-sm border border-orange-300 transition shadow-sm shrink-0"
                 >
-                  <GitFork className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-700" />
-                  <span>{isBn ? 'বংশধারা' : 'Lineage Tree'}</span>
+                  <Scroll className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-orange-700" />
+                  <span>{isBn ? 'পরিবার ইতিহাস' : 'Family Details'}</span>
                 </button>
               )}
 
               {/* Section 1.2 Action: Dar al-Nadwah Council Modal */}
-              {activeSection === '1.2' && (
+              {activeChapter === 1 && activeSection === '1.2' && (
                 <button
                   onClick={() => setIsDarAlNadwahOpen(true)}
                   className="flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 bg-amber-100/90 hover:bg-amber-200 text-amber-950 rounded-xl font-bold text-xs sm:text-sm border border-amber-300 transition shadow-sm shrink-0"
@@ -299,7 +421,7 @@ export default function HomePage() {
               )}
 
               {/* Section 1.3 Action: Religious History Modal */}
-              {activeSection === '1.3' && (
+              {activeChapter === 1 && activeSection === '1.3' && (
                 <button
                   onClick={() => {
                     setSelectedReligiousStationId('hubal_idols');
@@ -316,7 +438,6 @@ export default function HomePage() {
               <button
                 onClick={() => setIsPuzzleOpen(true)}
                 className="flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white rounded-xl font-bold text-xs sm:text-sm shadow-md transition shrink-0"
-                title={isBn ? 'ঐতিহাসিক পাজল ও চ্যালেঞ্জ খেলুন' : 'Play History Puzzles & Challenges'}
               >
                 <Puzzle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-200" />
                 <span>{isBn ? 'পাজল গেম' : 'Puzzles'}</span>
@@ -330,8 +451,8 @@ export default function HomePage() {
                 <HelpCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-700" />
                 <span>
                   {isBn
-                    ? `কুইজ (${activeSection === '1.3' ? '১.৩' : activeSection === '1.2' ? '১.২' : '১.১'})`
-                    : `Quiz (${activeSection})`}
+                    ? `কুইজ (${activeChapter === 2 ? '২.১' : activeSection === '1.3' ? '১.৩' : activeSection === '1.2' ? '১.২' : '১.১'})`
+                    : `Quiz (${activeChapter === 2 ? '2.1' : activeSection})`}
                 </span>
               </button>
 
@@ -342,81 +463,17 @@ export default function HomePage() {
               >
                 <BookMarked className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 <span>
-                  {isBn ? 'জার্নাল' : 'Journal'} ({discoveredLocations.length})
+                  {isBn ? 'জার্নাল' : 'Journal'} ({discoveredLocations.length + chapter2DiscoveredStations.length})
                 </span>
               </button>
             </div>
           </div>
         </div>
 
-        {/* Mobile 2x2 Quick Tools Grid (< sm) */}
-        <div className="grid grid-cols-2 gap-2 mt-2.5 pt-2 border-t border-amber-200/80 sm:hidden">
-          {/* Section Action */}
-          {activeSection === '1.1' && (
-            <button
-              onClick={() => setIsTreeOpen(true)}
-              className="flex items-center justify-center gap-1.5 px-2.5 py-1.5 bg-amber-100 hover:bg-amber-200 text-amber-950 rounded-xl font-bold text-xs border border-amber-300 transition shadow-xs w-full min-w-0"
-            >
-              <GitFork className="w-3.5 h-3.5 text-amber-700 shrink-0" />
-              <span className="truncate">{isBn ? 'বংশধারা' : 'Lineage Tree'}</span>
-            </button>
-          )}
-          {activeSection === '1.2' && (
-            <button
-              onClick={() => setIsDarAlNadwahOpen(true)}
-              className="flex items-center justify-center gap-1.5 px-2.5 py-1.5 bg-amber-100 hover:bg-amber-200 text-amber-950 rounded-xl font-bold text-xs border border-amber-300 transition shadow-xs w-full min-w-0"
-            >
-              <Landmark className="w-3.5 h-3.5 text-amber-700 shrink-0" />
-              <span className="truncate">{isBn ? 'দারুন নদওয়া' : 'Dar al-Nadwah'}</span>
-            </button>
-          )}
-          {activeSection === '1.3' && (
-            <button
-              onClick={() => {
-                setSelectedReligiousStationId('hubal_idols');
-                setIsReligiousModalOpen(true);
-              }}
-              className="flex items-center justify-center gap-1.5 px-2.5 py-1.5 bg-amber-100 hover:bg-amber-200 text-amber-950 rounded-xl font-bold text-xs border border-amber-300 transition shadow-xs w-full min-w-0"
-            >
-              <Scroll className="w-3.5 h-3.5 text-amber-700 shrink-0" />
-              <span className="truncate">{isBn ? 'ধর্ম ও সমাজ' : 'Religion & Society'}</span>
-            </button>
-          )}
-
-          {/* Puzzle Button */}
-          <button
-            onClick={() => setIsPuzzleOpen(true)}
-            className="flex items-center justify-center gap-1.5 px-2.5 py-1.5 bg-gradient-to-r from-purple-500 to-indigo-600 text-white rounded-xl font-bold text-xs shadow-xs transition w-full min-w-0"
-          >
-            <Puzzle className="w-3.5 h-3.5 text-amber-200 shrink-0" />
-            <span className="truncate">{isBn ? 'পাজল গেম' : 'Puzzles'}</span>
-          </button>
-
-          {/* Quiz Button */}
-          <button
-            onClick={() => setIsQuizOpen(true)}
-            className="flex items-center justify-center gap-1.5 px-2.5 py-1.5 bg-emerald-100 hover:bg-emerald-200 text-emerald-950 rounded-xl font-bold text-xs border border-emerald-300 transition shadow-xs w-full min-w-0"
-          >
-            <HelpCircle className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
-            <span className="truncate">
-              {isBn ? `কুইজ (${activeSection === '1.3' ? '১.৩' : activeSection === '1.2' ? '১.২' : '১.১'})` : `Quiz (${activeSection})`}
-            </span>
-          </button>
-
-          {/* Journal Button */}
-          <button
-            onClick={() => setIsJournalOpen(true)}
-            className="flex items-center justify-center gap-1.5 px-2.5 py-1.5 bg-gradient-to-r from-amber-500 to-amber-600 text-white rounded-xl font-bold text-xs shadow-xs transition w-full min-w-0"
-          >
-            <BookMarked className="w-3.5 h-3.5 shrink-0" />
-            <span className="truncate">{isBn ? 'জার্নাল' : 'Journal'} ({discoveredLocations.length})</span>
-          </button>
-        </div>
-
-        {/* 2. Section Selector Sub-Bar (Dropdown on Mobile, Tabs on Desktop) */}
+        {/* 2. Section Selector Sub-Bar */}
         <div className="mt-2.5 pt-2 border-t border-amber-200/80 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 w-full sm:w-auto">
-            <span className="text-[11px] sm:text-xs font-bold text-amber-900 uppercase tracking-wider font-bengali shrink-0">
+            <span className="text-[11px] sm:text-xs font-bold text-amber-900 uppercase tracking-wider shrink-0">
               {isBn ? 'পর্ব:' : 'Section:'}
             </span>
 
@@ -424,75 +481,89 @@ export default function HomePage() {
             <div className="relative flex-1 min-w-0 sm:hidden">
               <select
                 value={activeSection}
-                onChange={(e) => handleSelectSection(e.target.value as '1.1' | '1.2' | '1.3')}
-                className="w-full bg-gradient-to-r from-amber-600 to-amber-500 text-white font-black text-xs py-2 pl-3 pr-8 rounded-xl border border-amber-400 shadow-sm appearance-none focus:outline-none focus:ring-2 focus:ring-amber-300 truncate font-bengali"
+                onChange={(e) => handleSelectSection(e.target.value as any)}
+                className="w-full bg-gradient-to-r from-amber-600 to-amber-500 text-white font-black text-xs py-2 pl-3 pr-8 rounded-xl border border-amber-400 shadow-sm appearance-none focus:outline-none focus:ring-2 focus:ring-amber-300 truncate"
               >
-                <option value="1.1" className="bg-slate-900 text-white font-semibold">
-                  {isBn ? '📌 পর্ব ১.১: ভূগোল, জাতি ও কাবা' : '📌 1.1: Geography & Ka\'bah'}
-                </option>
-                <option value="1.2" className="bg-slate-900 text-white font-semibold">
-                  {isBn ? '🏛️ পর্ব ১.২: রাজবংশ ও প্রশাসন' : '🏛️ 1.2: Governance'}
-                </option>
-                <option value="1.3" className="bg-slate-900 text-white font-semibold">
-                  {isBn ? '📜 পর্ব ১.৩: ধর্ম ও সমাজ মানচিত্র' : '📜 1.3: Religion & Morals'}
-                </option>
+                {activeChapter === 1 ? (
+                  <>
+                    <option value="1.1" className="bg-slate-900 text-white font-semibold">
+                      {isBn ? '📌 পর্ব ১.১: ভূগোল, জাতি ও কাবা' : '📌 1.1: Geography & Ka\'bah'}
+                    </option>
+                    <option value="1.2" className="bg-slate-900 text-white font-semibold">
+                      {isBn ? '🏛️ পর্ব ১.২: রাজবংশ ও প্রশাসন' : '🏛️ 1.2: Governance'}
+                    </option>
+                    <option value="1.3" className="bg-slate-900 text-white font-semibold">
+                      {isBn ? '📜 পর্ব ১.৩: ধর্ম ও সমাজ মানচিত্র' : '📜 1.3: Religion & Morals'}
+                    </option>
+                  </>
+                ) : (
+                  <option value="2.1" className="bg-slate-900 text-white font-semibold">
+                    {isBn ? '👑 পর্ব ২.১: পরিবার, নসব ও হস্তীবাহিনী' : '👑 2.1: Family, Lineage & Elephant Year'}
+                  </option>
+                )}
               </select>
               <ChevronDown className="w-4 h-4 text-white absolute right-2.5 top-2.5 pointer-events-none" />
             </div>
 
             {/* Desktop Tabs (>= sm) */}
-            <div className="hidden sm:flex items-center gap-1.5 sm:gap-2 bg-amber-100/80 p-1 rounded-xl border border-amber-300">
-              <button
-                onClick={() => handleSelectSection('1.1')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1 shrink-0 ${
-                  activeSection === '1.1'
-                    ? 'bg-amber-600 text-white shadow-sm'
-                    : 'text-amber-950 hover:bg-amber-200'
-                }`}
-              >
-                <Compass className="w-3.5 h-3.5" />
-                <span>
-                  {isBn ? '১.১: ভূগোল ও কাবা' : '1.1: Geography & Ka\'bah'}
-                </span>
-              </button>
+            {activeChapter === 1 ? (
+              <div className="hidden sm:flex items-center gap-1.5 sm:gap-2 bg-amber-100/80 p-1 rounded-xl border border-amber-300">
+                <button
+                  onClick={() => handleSelectSection('1.1')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1 shrink-0 ${
+                    activeSection === '1.1'
+                      ? 'bg-amber-600 text-white shadow-sm'
+                      : 'text-amber-950 hover:bg-amber-200'
+                  }`}
+                >
+                  <Compass className="w-3.5 h-3.5" />
+                  <span>{isBn ? '১.১: ভূগোল ও কাবা' : '1.1: Geography & Ka\'bah'}</span>
+                </button>
 
-              <button
-                onClick={() => handleSelectSection('1.2')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1 shrink-0 ${
-                  activeSection === '1.2'
-                    ? 'bg-amber-600 text-white shadow-sm'
-                    : 'text-amber-950 hover:bg-amber-200'
-                }`}
-              >
-                <Landmark className="w-3.5 h-3.5" />
-                <span>
-                  {isBn ? '১.২: রাজবংশ ও প্রশাসন' : '1.2: Governance'}
-                </span>
-              </button>
+                <button
+                  onClick={() => handleSelectSection('1.2')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1 shrink-0 ${
+                    activeSection === '1.2'
+                      ? 'bg-amber-600 text-white shadow-sm'
+                      : 'text-amber-950 hover:bg-amber-200'
+                  }`}
+                >
+                  <Landmark className="w-3.5 h-3.5" />
+                  <span>{isBn ? '১.২: রাজবংশ ও প্রশাসন' : '1.2: Governance'}</span>
+                </button>
 
-              <button
-                onClick={() => handleSelectSection('1.3')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1 shrink-0 ${
-                  activeSection === '1.3'
-                    ? 'bg-amber-600 text-white shadow-sm'
-                    : 'text-amber-950 hover:bg-amber-200'
-                }`}
-              >
-                <Scroll className="w-3.5 h-3.5" />
-                <span>
-                  {isBn ? '১.৩: ধর্ম ও চারিত্রিক মানচিত্র' : '1.3: Religion & Morals'}
-                </span>
-              </button>
-            </div>
+                <button
+                  onClick={() => handleSelectSection('1.3')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1 shrink-0 ${
+                    activeSection === '1.3'
+                      ? 'bg-amber-600 text-white shadow-sm'
+                      : 'text-amber-950 hover:bg-amber-200'
+                  }`}
+                >
+                  <Scroll className="w-3.5 h-3.5" />
+                  <span>{isBn ? '১.৩: ধর্ম ও চারিত্রিক মানচিত্র' : '1.3: Religion & Morals'}</span>
+                </button>
+              </div>
+            ) : (
+              <div className="hidden sm:flex items-center gap-1.5 sm:gap-2 bg-orange-100/80 p-1 rounded-xl border border-orange-300">
+                <button
+                  onClick={() => handleSelectSection('2.1')}
+                  className="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-orange-600 text-white shadow-sm flex items-center gap-1.5 shrink-0"
+                >
+                  <Award className="w-3.5 h-3.5" />
+                  <span>{isBn ? '২.১: পরিবার, নসবনামা ও হস্তীবাহিনী' : '2.1: Family, Lineage & Elephant Year'}</span>
+                </button>
+              </div>
+            )}
           </div>
 
-          <span className="text-xs text-slate-500 italic hidden md:inline">
-            {isBn ? activeSectionMeta.taglineBn : activeSectionMeta.taglineEn}
+          <span className="text-xs text-slate-500 italic hidden md:inline truncate max-w-md">
+            {isBn ? currentTaglineBn : currentTaglineEn}
           </span>
         </div>
       </header>
 
-      {/* 3. Scene Selector Sub-Bar (Dropdown on Mobile, Buttons on Desktop) */}
+      {/* 3. Scene Selector Sub-Bar */}
       <div className="flex items-center justify-between mb-2 sm:mb-3 px-1 sm:px-2 gap-2 w-full">
         <div className="flex items-center gap-1.5 text-xs sm:text-sm font-bold text-amber-900 shrink-0">
           <Layers className="w-4 h-4 text-amber-600 shrink-0" />
@@ -504,9 +575,21 @@ export default function HomePage() {
           <select
             value={currentScene}
             onChange={(e) => handleSwitchScene(e.target.value as any)}
-            className="w-full bg-white text-amber-950 font-bold text-xs py-2 pl-3 pr-8 rounded-xl border border-amber-300 shadow-xs appearance-none focus:outline-none focus:ring-2 focus:ring-amber-500 truncate font-bengali"
+            className="w-full bg-white text-amber-950 font-bold text-xs py-2 pl-3 pr-8 rounded-xl border border-amber-300 shadow-xs appearance-none focus:outline-none focus:ring-2 focus:ring-amber-500 truncate"
           >
-            {activeSection === '1.1' && (
+            {activeChapter === 2 ? (
+              <>
+                <option value="FamilyLineageScene" className="bg-slate-900 text-white">
+                  {isBn ? '📜 ১. পরিবার ও নসবনামা' : '📜 1. Family & Lineage'}
+                </option>
+                <option value="ElephantArmyScene" className="bg-slate-900 text-white">
+                  {isBn ? '🐘 ২. হস্তীবাহিনী ৫৭১ খ্রি.' : '🐘 2. Elephant Year 571 CE'}
+                </option>
+                <option value="ArabiaMapScene" className="bg-slate-900 text-white">
+                  {isBn ? '🧭 ৩. আরবের সামগ্রিক মানচিত্র' : '🧭 3. Arabia General Map'}
+                </option>
+              </>
+            ) : activeSection === '1.1' ? (
               <>
                 <option value="ArabiaMapScene" className="bg-slate-900 text-white">
                   {isBn ? '🧭 ১. আরবের মানচিত্র ও বাণিজ্য' : '🧭 1. Arabia Map & Trade'}
@@ -515,8 +598,7 @@ export default function HomePage() {
                   {isBn ? '✨ ২. মক্কার উপাখ্যান (৫টি ধাপ)' : '✨ 2. Makkah Story (5 Phases)'}
                 </option>
               </>
-            )}
-            {activeSection === '1.2' && (
+            ) : activeSection === '1.2' ? (
               <>
                 <option value="ArabiaMapScene" className="bg-slate-900 text-white">
                   {isBn ? '🧭 ১. আরবের সীমানা' : '🧭 1. Arabia Borders'}
@@ -525,8 +607,7 @@ export default function HomePage() {
                   {isBn ? '🏛️ ২. দারুন নদওয়া সংসদ' : '🏛️ 2. Dar al-Nadwah Council'}
                 </option>
               </>
-            )}
-            {activeSection === '1.3' && (
+            ) : (
               <>
                 <option value="ArabiaMapScene" className="bg-slate-900 text-white">
                   {isBn ? '🧭 ১. আরবের মানচিত্র' : '🧭 1. Arabia Map'}
@@ -541,7 +622,43 @@ export default function HomePage() {
         </div>
 
         {/* Desktop Scene Selector Buttons (>= sm) */}
-        {activeSection === '1.1' && (
+        {activeChapter === 2 ? (
+          <div className="hidden sm:flex items-center gap-1.5">
+            <button
+              onClick={() => handleSwitchScene('FamilyLineageScene')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 ${
+                currentScene === 'FamilyLineageScene'
+                  ? 'bg-orange-600 text-white shadow'
+                  : 'bg-white/80 text-amber-900 hover:bg-amber-200'
+              }`}
+            >
+              <Scroll className="w-3.5 h-3.5" />
+              <span>{isBn ? '১. পরিবার ও নসবনামা' : '1. Family & Lineage'}</span>
+            </button>
+            <button
+              onClick={() => handleSwitchScene('ElephantArmyScene')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 ${
+                currentScene === 'ElephantArmyScene'
+                  ? 'bg-red-700 text-white shadow'
+                  : 'bg-white/80 text-amber-900 hover:bg-amber-200'
+              }`}
+            >
+              <span>🐘</span>
+              <span>{isBn ? '২. হস্তীবাহিনী ৫৭১ খ্রি.' : '2. Elephant Year (571 CE)'}</span>
+            </button>
+            <button
+              onClick={() => handleSwitchScene('ArabiaMapScene')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 ${
+                currentScene === 'ArabiaMapScene'
+                  ? 'bg-amber-600 text-white shadow'
+                  : 'bg-white/80 text-amber-900 hover:bg-amber-200'
+              }`}
+            >
+              <Compass className="w-3.5 h-3.5" />
+              <span>{isBn ? '৩. আরবের মানচিত্র' : '3. Arabia Map'}</span>
+            </button>
+          </div>
+        ) : activeSection === '1.1' ? (
           <div className="hidden sm:flex items-center gap-1.5">
             <button
               onClick={() => handleSwitchScene('ArabiaMapScene')}
@@ -566,10 +683,7 @@ export default function HomePage() {
               <span>{isBn ? '২. মক্কার উপাখ্যান (৫ ধাপ)' : '2. Makkah Story (5 Phases)'}</span>
             </button>
           </div>
-        )}
-
-        {/* Desktop Section 1.2 Scenes */}
-        {activeSection === '1.2' && (
+        ) : activeSection === '1.2' ? (
           <div className="hidden sm:flex items-center gap-1.5">
             <button
               onClick={() => handleSwitchScene('ArabiaMapScene')}
@@ -594,10 +708,7 @@ export default function HomePage() {
               <span>{isBn ? '২. দারুন নদওয়া সংসদ' : '2. Dar al-Nadwah'}</span>
             </button>
           </div>
-        )}
-
-        {/* Desktop Section 1.3 Scenes */}
-        {activeSection === '1.3' && (
+        ) : (
           <div className="hidden sm:flex items-center gap-1.5">
             <button
               onClick={() => handleSwitchScene('ArabiaMapScene')}
@@ -638,7 +749,15 @@ export default function HomePage() {
           </div>
           <div className="text-xs sm:text-sm text-slate-700 font-medium">
             💡 <strong className="text-amber-950">{isBn ? 'কীভাবে খেলবে:' : 'How to Play:'}</strong>{' '}
-            {currentScene === 'IdolHistoryScene'
+            {currentScene === 'FamilyLineageScene'
+              ? isBn
+                ? 'হাশিমের সারীদ, আবদুল মুত্তালিবের যমযম খনন, আবদুল্লাহর ১০০ উটের মুক্তিপণ ও ২১ পুরুষের নসবনামা স্টেশনে ক্লিক করে সত্য ইতিহাস আবিষ্কার করো!'
+                : 'Tap on Hashim’s Thareed, Abdul Muttalib’s Zamzam excavation, Abdullah’s 100-camel ransom, and the 21 Ancestors to explore authentic history!'
+              : currentScene === 'ElephantArmyScene'
+              ? isBn
+                ? 'মুহাসসার উপত্যকার ৫টি পর্যবেক্ষণ কেন্দ্রে ট্যাপ করে আবরাহার ৬০ হাজার সৈন্য ও আবাবীল পাখির অলৌকিক ধ্বংস প্রত্যক্ষ করো!'
+                : 'Tap the 5 observation posts across Wadi Muhassir to witness the dramatic defeat of the Elephant Army and divine protection of the Ka\'bah!'
+              : currentScene === 'IdolHistoryScene'
               ? isBn
                 ? 'আম্র বিন লুহাইয়ের হুবাল মূর্তি, ভাগ্যের তীর আজলাম, পশুর কুসংস্কার ও আরবদের ৪টি মহৎ স্বভাবের স্থানগুলোতে ট্যাপ করে সত্য আবিষ্কার করো!'
                 : 'Tap on Amr bin Luhayy\'s Hubal, Azlam arrows, livestock taboos, and the 4 noble Arab virtues to discover authentic history!'
@@ -646,17 +765,9 @@ export default function HomePage() {
               ? isBn
                 ? 'সাফা-মারওয়া, যমযমের অলৌকিক ধারা, জুরহুম গোত্রের কাফেলা ও কাবার প্রাচীর নির্মাণ—ধাপে ধাপে ইন্টারঅ্যাক্ট করে মক্কার ইতিহাস প্রত্যক্ষ করো!'
                 : 'Explore the 5 living phases of Makkah: Safa & Marwah, the Zamzam miracle, Jurhum encampment, Ka\'bah construction, and night sanctuary!'
-              : activeSection === '1.1'
-              ? isBn
-                ? 'মানচিত্রে জ্বলজ্বলে পিনগুলোতে ট্যাপ করে আরবের বিভিন্ন ঐতিহাসিক স্থান, সাগর এবং বাণিজ্য পথ আবিষ্কার করো এবং তোমার সীরাহ জার্নালে ব্যাজ সংগ্রহ করো!'
-                : 'Tap the glowing pins across the map to discover historical cities, surrounding seas, and ancient trade routes to collect discovery badges in your Seerah Journal!'
-              : activeSection === '1.2'
-              ? isBn
-                ? 'দারুন নদওয়ার সভাকক্ষে কুরাইশের বিভিন্ন সংসদীয় দায়িত্ব এবং প্রাচীন আরবের সীমান্ত রাজ্যগুলোতে ট্যাপ করে মক্কার শাসন ও যী কারের ইতিহাস শেখো!'
-                : 'Step into Dar al-Nadwah or explore regional kingdoms on the map to learn how ancient Makkah governed and the victory of Dhi Qar!'
               : isBn
-                ? 'মানচিত্রে অথবা ধর্ম ও কুসংস্কার দৃশ্যপটে ট্যাপ করে প্রাক-ইসলামী আরবের পূর্ণচিত্র প্রত্যক্ষ করো!'
-                : 'Explore ancient Arabia on the map or tap the Religion & Moral Reform scene to see the complete pre-Islamic landscape!'}
+              ? 'মানচিত্রে জ্বলজ্বলে পিনগুলোতে ট্যাপ করে আরবের বিভিন্ন ঐতিহাসিক স্থান, সাগর এবং বাণিজ্য পথ আবিষ্কার করো এবং তোমার সীরাহ জার্নালে ব্যাজ সংগ্রহ করো!'
+              : 'Tap the glowing pins across the map to discover historical cities, surrounding seas, and ancient trade routes to collect discovery badges in your Seerah Journal!'}
           </div>
         </div>
         <button
@@ -681,10 +792,22 @@ export default function HomePage() {
         lang={lang}
       />
 
+      <Chapter2DetailModal
+        stationId={selectedChapter2StationId}
+        isOpen={isChapter2ModalOpen}
+        onClose={() => {
+          setIsChapter2ModalOpen(false);
+          setSelectedChapter2StationId(null);
+        }}
+        lang={lang}
+        onSaveToJournal={handleChapter2SaveToJournal}
+      />
+
       <SeerahJournal
         isOpen={isJournalOpen}
         onClose={() => setIsJournalOpen(false)}
         discoveredLocations={discoveredLocations}
+        chapter2DiscoveredStations={chapter2DiscoveredStations}
         tribesLearned={learnedTribes}
         quizPassed={quizPassed}
         score={quizScore}
@@ -697,6 +820,7 @@ export default function HomePage() {
         onTribeLearned={handleTribeLearned}
         learnedTribes={learnedTribes}
         lang={lang}
+        defaultTab={treeDefaultTab}
       />
 
       <DarAlNadwahModal
@@ -725,14 +849,18 @@ export default function HomePage() {
         lang={lang}
         quizzes={activeQuizQuestions}
         titleBn={
-          activeSection === '1.3'
+          activeChapter === 2
+            ? 'কুইজ চ্যালেঞ্জ: রাসূলুল্লাহ ﷺ-এর পরিবার ও নসবনামা (অধ্যায় ২)'
+            : activeSection === '1.3'
             ? 'কুইজ চ্যালেঞ্জ: প্রাক-ইসলামী ধর্ম, সমাজ ও নৈতিকতা (পর্ব ১.৩)'
             : activeSection === '1.2'
             ? 'কুইজ চ্যালেঞ্জ: আরবের রাজবংশ ও মক্কার প্রশাসন (পর্ব ১.২)'
             : 'কুইজ চ্যালেঞ্জ: আরবের ভূগোল ও পবিত্র কাবা (পর্ব ১.১)'
         }
         titleEn={
-          activeSection === '1.3'
+          activeChapter === 2
+            ? 'Quiz Challenge: Prophet Muhammad ﷺ\'s Lineage & Family (Chapter 2)'
+            : activeSection === '1.3'
             ? 'Quiz Challenge: Religion, Society & Morals (Part 1.3)'
             : activeSection === '1.2'
             ? 'Quiz Challenge: Kingdoms & Governance (Part 1.2)'

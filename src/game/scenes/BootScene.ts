@@ -6,7 +6,7 @@ export class BootScene extends Scene {
   }
 
   preload() {
-    // 1. Load high-resolution background artwork assets
+    // 1. Load Chapter 1 background artwork assets
     this.load.image('arabia_map_parchment', 'assets/images/arabia_map_parchment.jpg');
     this.load.image('makkah_valley_day', 'assets/images/makkah_valley_day.jpg');
     this.load.image('zamzam_oasis_bloom', 'assets/images/zamzam_oasis_bloom.jpg');
@@ -18,7 +18,13 @@ export class BootScene extends Scene {
     this.load.image('ukaz_marketplace_trade', 'assets/images/ukaz_marketplace_trade.jpg');
     this.load.image('pre_islamic_reformation', 'assets/images/pre_islamic_reformation.jpg');
 
-    // 2. Generate procedural helper textures
+    // 2. Load Chapter 2 background artwork assets
+    this.load.image('hashim_caravan_mecca', 'assets/images/hashim_caravan_mecca.jpg');
+    this.load.image('zamzam_rediscovery_ancient', 'assets/images/zamzam_rediscovery_ancient.jpg');
+    this.load.image('wadi_muhassir_elephant_storm', 'assets/images/wadi_muhassir_elephant_storm.jpg');
+    this.load.image('yathrib_oasis_groves', 'assets/images/yathrib_oasis_groves.jpg');
+
+    // 3. Generate procedural helper textures
     this.createProceduralAssets();
   }
 
@@ -55,11 +61,9 @@ export class BootScene extends Scene {
     // 3. Trade Caravan Sprite (Stylized Desert Camel silhouette)
     const camel = this.make.graphics({ x: 0, y: 0 });
     camel.fillStyle(0x78350f, 1);
-    // Body & hump
     camel.fillRoundedRect(8, 12, 24, 14, 4);
     camel.fillCircle(18, 10, 7); // Hump
     camel.fillCircle(28, 8, 4); // Neck / head
-    // Legs
     camel.fillRect(10, 24, 3, 10);
     camel.fillRect(16, 24, 3, 10);
     camel.fillRect(24, 24, 3, 10);
@@ -80,5 +84,27 @@ export class BootScene extends Scene {
     water.fillCircle(8, 8, 6);
     water.generateTexture('particle_water', 16, 16);
     water.destroy();
+
+    // 6. Lineage Star Node (Royal Gold & Amber glowing node)
+    const starNode = this.make.graphics({ x: 0, y: 0 });
+    starNode.fillStyle(0xf59e0b, 0.35);
+    starNode.fillCircle(28, 28, 26);
+    starNode.fillStyle(0xd97706, 0.9);
+    starNode.fillCircle(28, 28, 18);
+    starNode.fillStyle(0xfffbeb, 1);
+    starNode.fillCircle(28, 28, 8);
+    starNode.generateTexture('lineage_star', 56, 56);
+    starNode.destroy();
+
+    // 7. Elephant Year Shield Marker (Crimson & Gold)
+    const shieldMarker = this.make.graphics({ x: 0, y: 0 });
+    shieldMarker.fillStyle(0xb91c1c, 0.4);
+    shieldMarker.fillCircle(28, 28, 26);
+    shieldMarker.fillStyle(0x991b1b, 0.9);
+    shieldMarker.fillCircle(28, 28, 18);
+    shieldMarker.fillStyle(0xfef08a, 1);
+    shieldMarker.fillCircle(28, 28, 8);
+    shieldMarker.generateTexture('elephant_shield_marker', 56, 56);
+    shieldMarker.destroy();
   }
 }

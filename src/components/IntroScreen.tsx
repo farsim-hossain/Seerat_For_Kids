@@ -1,23 +1,27 @@
 'use client';
 
 import React from 'react';
-import { Sparkles, ChevronRight, Languages, BookOpen, ShieldCheck, Lock, Map, UserCheck, HeartHandshake } from 'lucide-react';
+import {
+  Sparkles,
+  ChevronRight,
+  Languages,
+  BookOpen,
+  ShieldCheck,
+  Map,
+  Users,
+} from 'lucide-react';
 
 interface IntroScreenProps {
   lang: 'bn' | 'en';
   onToggleLang: () => void;
-  onStartJourney: (sectionId?: '1.1' | '1.2' | '1.3') => void;
+  onStartJourney: (chapter?: 1 | 2, sectionId?: string) => void;
 }
 
 export default function IntroScreen({ lang, onToggleLang, onStartJourney }: IntroScreenProps) {
   const isBn = lang === 'bn';
 
-  const handleStartChapter = (sectionId: '1.1' | '1.2' | '1.3' = '1.1') => {
-    onStartJourney(sectionId);
-  };
-
   return (
-    <div className="relative min-h-[90vh] flex flex-col justify-between p-4 sm:p-8 max-w-5xl mx-auto">
+    <div className="relative min-h-[90vh] flex flex-col justify-between p-4 sm:p-8 max-w-5xl mx-auto font-bengali">
       {/* Top Navbar */}
       <header className="flex items-center justify-between bg-white/90 backdrop-blur-md px-5 py-3 rounded-2xl border-2 border-amber-300 shadow-md">
         <div className="flex items-center gap-3">
@@ -28,7 +32,7 @@ export default function IntroScreen({ lang, onToggleLang, onStartJourney }: Intr
             <span className="text-[11px] font-bold uppercase tracking-wider text-amber-800">
               {isBn ? 'শিশুদের জন্য সীরাত' : 'Seerah for Young Explorers'}
             </span>
-            <h2 className="text-base sm:text-lg font-black text-amber-950 font-bengali leading-none">
+            <h2 className="text-base sm:text-lg font-black text-amber-950 leading-none">
               {isBn ? 'সীরাত ফর কিডস' : 'Seerat For Kids'}
             </h2>
           </div>
@@ -57,7 +61,7 @@ export default function IntroScreen({ lang, onToggleLang, onStartJourney }: Intr
         </div>
 
         {/* Hero Title */}
-        <h1 className="text-3xl sm:text-5xl md:text-6xl font-black text-amber-950 font-bengali tracking-tight leading-tight mb-4 max-w-3xl">
+        <h1 className="text-3xl sm:text-5xl md:text-6xl font-black text-amber-950 tracking-tight leading-tight mb-4 max-w-3xl">
           {isBn ? (
             <>
               রাসূলুল্লাহ <span className="text-amber-600">ﷺ</span>-এর সোনালী ইতিহাসে স্বাগতম
@@ -69,10 +73,10 @@ export default function IntroScreen({ lang, onToggleLang, onStartJourney }: Intr
           )}
         </h1>
 
-        <p className="text-slate-700 text-sm sm:text-lg max-w-2xl font-medium font-bengali mb-8 leading-relaxed">
+        <p className="text-slate-700 text-sm sm:text-lg max-w-2xl font-medium mb-8 leading-relaxed">
           {isBn
-            ? 'মরুভূমির প্রাচীন ভূগোল, অলৌকিক যমযম কূপ, কাবার ভিত্তি স্থাপন থেকে শুরু করে মক্কার ঐতিহ্যবাহী দারুন নদওয়া ও রাজবংশের এক রোমাঞ্চকর শিক্ষামূলক সীরাত যাত্রা।'
-            : 'An interactive discovery journey exploring the ancient desert fortress of Arabia, the miracle of Zamzam, the foundations of the Ka\'bah, and the historic council of Dar al-Nadwah.'}
+            ? 'মরুভূমির প্রাচীন ভূগোল, অলৌকিক যমযম কূপ, কাবার ভিত্তি স্থাপন থেকে শুরু করে হাশিমী বংশধারা, হস্তীবাহিনী ও সীরাতের এক রোমাঞ্চকর শিক্ষামূলক যাত্রা।'
+            : 'An interactive discovery journey exploring ancient Arabia, the miracle of Zamzam, the foundations of the Ka\'bah, the Hashimi lineage, and the Year of the Elephant.'}
         </p>
 
         {/* Hero Artwork Banner */}
@@ -83,18 +87,18 @@ export default function IntroScreen({ lang, onToggleLang, onStartJourney }: Intr
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-amber-950/70 via-amber-950/20 to-transparent flex items-end p-4 sm:p-6">
-            <span className="text-white font-bold text-xs sm:text-sm font-bengali bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20">
+            <span className="text-white font-bold text-xs sm:text-sm bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20">
               {isBn ? '✨ আরবের ঐতিহাসিক ভূখণ্ডের সচিত্র অভিজ্ঞতা' : '✨ Illustrated Historic Arabia Realm'}
             </span>
           </div>
         </div>
 
         {/* ============================================================== */}
-        {/* MAIN CHAPTERS LIST (MAIN SECTIONS ONLY) */}
+        {/* MAIN CHAPTERS LIST (CHAPTER 1 & CHAPTER 2) */}
         {/* ============================================================== */}
         <div className="w-full max-w-3xl space-y-4 mb-8 text-left">
           <div className="flex items-center justify-between px-2">
-            <h2 className="text-base sm:text-lg font-black text-amber-950 font-bengali flex items-center gap-2">
+            <h2 className="text-base sm:text-lg font-black text-amber-950 flex items-center gap-2">
               <Map className="w-5 h-5 text-amber-600" />
               <span>{isBn ? 'সীরাতের প্রধান অধ্যায়সমূহ (Main Chapters):' : 'Main Seerah Chapters:'}</span>
             </h2>
@@ -105,7 +109,7 @@ export default function IntroScreen({ lang, onToggleLang, onStartJourney }: Intr
 
           {/* Chapter 1 Card: Arab (প্রাক-ইসলামী আরব) */}
           <div
-            onClick={() => handleStartChapter('1.1')}
+            onClick={() => onStartJourney(1, '1.1')}
             className="group relative bg-white/95 backdrop-blur-sm p-5 sm:p-6 rounded-3xl border-3 border-amber-300 hover:border-amber-500 shadow-md hover:shadow-2xl transition-all cursor-pointer transform hover:-translate-y-1 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
           >
             <div className="flex items-start gap-4">
@@ -123,10 +127,10 @@ export default function IntroScreen({ lang, onToggleLang, onStartJourney }: Intr
                   </span>
                 </div>
 
-                <h3 className="text-xl font-black text-amber-950 font-bengali group-hover:text-amber-600 transition-colors">
+                <h3 className="text-xl font-black text-amber-950 group-hover:text-amber-600 transition-colors">
                   {isBn ? '১. প্রাক-ইসলামী আরব (Arabia)' : '1. Pre-Islamic Arabia (Arab)'}
                 </h3>
-                <p className="text-xs sm:text-sm text-slate-600 font-bengali mt-1 max-w-lg leading-relaxed">
+                <p className="text-xs sm:text-sm text-slate-600 mt-1 max-w-lg leading-relaxed">
                   {isBn
                     ? 'আরবের ভূগোল, তিন গোত্রধারা, যমযমের অলৌকিক প্রবাহ, কাবার নির্মাণ, দারুন নদওয়া ও সমাজ সংস্কারের ইন্টারঅ্যাক্টিভ মানচিত্র।'
                     : 'Interactive exploration of Arabian geography, tribal lineages, Zamzam, Ka\'bah foundations, Dar al-Nadwah council & moral reform.'}
@@ -135,51 +139,70 @@ export default function IntroScreen({ lang, onToggleLang, onStartJourney }: Intr
             </div>
 
             <div className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-3 bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-700 hover:to-amber-600 text-white rounded-2xl font-bold text-xs sm:text-sm shadow-md transition-all group-hover:shadow-lg shrink-0">
-              <span>{isBn ? 'অধ্যায় শুরু করো' : 'Explore Chapter 1'}</span>
+              <span>{isBn ? 'অধ্যায় ১ শুরু করো' : 'Explore Chapter 1'}</span>
               <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
             </div>
           </div>
 
-          {/* Chapter 2 Card: Prophet Muhammad PBUH - Birth & Youth (Locked / Coming Soon) */}
-          <div className="bg-slate-900/60 border-2 border-dashed border-amber-400/30 rounded-3xl p-5 sm:p-6 opacity-85 backdrop-blur-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          {/* Chapter 2 Card: Prophet Muhammad ﷺ - Family Background & Lineage (UNLOCKED!) */}
+          <div
+            onClick={() => onStartJourney(2, '2.1')}
+            className="group relative bg-white/95 backdrop-blur-sm p-5 sm:p-6 rounded-3xl border-3 border-amber-400 hover:border-amber-600 shadow-md hover:shadow-2xl transition-all cursor-pointer transform hover:-translate-y-1 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+          >
             <div className="flex items-start gap-4">
-              <div className="w-14 h-14 rounded-2xl bg-slate-800 text-amber-400 flex items-center justify-center font-black text-2xl border border-amber-500/30 shrink-0">
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-700 via-orange-600 to-red-600 text-white flex items-center justify-center font-black text-2xl shadow-md shrink-0 group-hover:scale-105 transition-transform">
                 {isBn ? '২' : '2'}
               </div>
 
               <div>
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="text-xs font-bold uppercase tracking-wider px-3 py-0.5 rounded-full bg-slate-800 text-amber-300 border border-amber-500/30">
+                  <span className="text-xs font-bold uppercase tracking-wider px-3 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300">
                     {isBn ? 'অধ্যায় ২' : 'Chapter 2'}
                   </span>
-                  <span className="flex items-center gap-1 text-xs font-bold text-amber-400 bg-amber-950/60 px-2.5 py-0.5 rounded-full border border-amber-500/30">
-                    <Lock className="w-3 h-3" />
-                    <span>{isBn ? 'শীঘ্রই আসছে' : 'Coming Soon'}</span>
+                  <span className="flex items-center gap-1 text-xs font-bold text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full border border-emerald-300">
+                    <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>{isBn ? 'নতুন পর্ব যুক্ত হয়েছে' : 'New Section Available'}</span>
                   </span>
                 </div>
 
-                <h3 className="text-lg font-black text-amber-200 font-bengali">
-                  {isBn ? '২. রাসূলুল্লাহ ﷺ-এর পবিত্র জন্ম ও শৈশব' : '2. Prophet Muhammad (PBUH) - Blessed Birth & Youth'}
+                <h3 className="text-xl font-black text-amber-950 group-hover:text-amber-700 transition-colors">
+                  {isBn ? '২. রাসূলুল্লাহ ﷺ-এর পরিবার ও বংশ পরিচয়' : "2. Prophet Muhammad ﷺ's Family Background & Lineage"}
                 </h3>
-                <p className="text-xs text-slate-300 font-bengali mt-1 max-w-lg leading-relaxed">
+                <p className="text-xs sm:text-sm text-slate-600 mt-1 max-w-lg leading-relaxed">
                   {isBn
-                    ? 'আমুল ফীল (হস্তী বছর), হালিমা সাদিয়াহ (রা.)-এর স্নেহচ্ছায়া, বক্ষ বিদারণ ও শৈশবের পবিত্র ইতিহাস।'
-                    : 'The Year of the Elephant, fosterage with Halimah (RA), and early life of the Prophet ﷺ.'}
+                    ? 'হাশিমের সারীদ ও বাণিজ্য, আবদুল মুত্তালিব ও যমযম পুনঃখনন, হস্তীবাহিনীর অলৌকিক ঘটনা (৫৭১ খ্রি.) এবং আবদুল্লাহর ১০০ উটের মুক্তিপণ।'
+                    : 'Hashim\'s hospitality, Abdul Muttalib & the Zamzam rediscovery, the miraculous Elephant Army defeat (571 CE), and Abdullah\'s 100-camel ransom.'}
                 </p>
               </div>
+            </div>
+
+            <div className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-3 bg-gradient-to-r from-amber-700 to-orange-600 hover:from-amber-800 hover:to-orange-700 text-white rounded-2xl font-bold text-xs sm:text-sm shadow-md transition-all group-hover:shadow-lg shrink-0">
+              <span>{isBn ? 'অধ্যায় ২ শুরু করো' : 'Explore Chapter 2'}</span>
+              <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
             </div>
           </div>
         </div>
 
-        {/* Big Glow CTA Button */}
-        <button
-          onClick={() => handleStartChapter('1.1')}
-          className="group relative inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-amber-600 via-amber-500 to-orange-500 hover:from-amber-700 hover:to-orange-600 text-white rounded-2xl font-black text-lg sm:text-xl shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-200 font-bengali border border-amber-300"
-        >
-          <Sparkles className="w-6 h-6 animate-pulse" />
-          <span>{isBn ? '১ম অধ্যায়ে প্রবেশ করো' : 'Enter Chapter 1'}</span>
-          <ChevronRight className="w-6 h-6 transition-transform group-hover:translate-x-1.5" />
-        </button>
+        {/* Dual CTA Buttons */}
+        <div className="flex flex-col sm:flex-row items-center gap-4">
+          <button
+            onClick={() => onStartJourney(1, '1.1')}
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-7 py-3.5 bg-gradient-to-r from-amber-600 to-orange-500 hover:from-amber-700 hover:to-orange-600 text-white rounded-2xl font-black text-base sm:text-lg shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-200 border border-amber-300"
+          >
+            <Map className="w-5 h-5" />
+            <span>{isBn ? '১ম অধ্যায়ে প্রবেশ করো' : 'Enter Chapter 1'}</span>
+            <ChevronRight className="w-5 h-5" />
+          </button>
+
+          <button
+            onClick={() => onStartJourney(2, '2.1')}
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-7 py-3.5 bg-gradient-to-r from-amber-800 to-red-700 hover:from-amber-900 hover:to-red-800 text-white rounded-2xl font-black text-base sm:text-lg shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-200 border border-amber-300"
+          >
+            <Sparkles className="w-5 h-5 animate-pulse" />
+            <span>{isBn ? '২য় অধ্যায়ে প্রবেশ করো' : 'Enter Chapter 2'}</span>
+            <ChevronRight className="w-5 h-5" />
+          </button>
+        </div>
       </div>
 
       {/* Sacred Rule Notice Footer */}
