@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { X, GitFork, Users, Sparkles, ChevronRight, Check, Award } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { X, GitFork, Users, Sparkles, ChevronRight, Check, Award, BookOpen, ShieldAlert } from 'lucide-react';
 import { CHAPTER_1_DATA, TribeNode } from '../data/chapter1Data';
 import { CHAPTER_2_DATA } from '../data/chapter2Data';
 
@@ -23,7 +23,15 @@ export default function LineageTreeModal({
   defaultTab = 'groups',
 }: LineageTreeModalProps) {
   const [activeTab, setActiveTab] = useState<'groups' | 'prophet_lineage' | 'ancestors_21'>(defaultTab);
+  const [lineagePart, setLineagePart] = useState<'part1' | 'part2' | 'part3'>('part1');
   const [selectedTribe, setSelectedTribe] = useState<TribeNode>(CHAPTER_1_DATA.tribes[0]);
+
+  useEffect(() => {
+    if (isOpen) {
+      setActiveTab(defaultTab);
+      setLineagePart('part1');
+    }
+  }, [isOpen, defaultTab]);
 
   if (!isOpen) return null;
 
@@ -90,7 +98,7 @@ export default function LineageTreeModal({
             }`}
           >
             <Award className="w-4 h-4" />
-            <span>{isBn ? '২১ পুরুষ (আদনান পর্যন্ত)' : '21 Ancestors (to Adnan)'}</span>
+            <span>{isBn ? 'নসবনামার ৩ অংশ (আদম আ. পর্যন্ত)' : '3-Part Lineage (to Adam AS)'}</span>
           </button>
         </div>
 
@@ -213,51 +221,151 @@ export default function LineageTreeModal({
               </div>
             </div>
           ) : (
-            /* 21 Ancestors Tab (Adnan to Muhammad ﷺ) from Chapter 2 */
+            /* 3-Part Lineage Tabs from Ar-Raheeq Al-Makhtum */
             <div className="space-y-4">
-              <div className="bg-amber-100/70 p-3.5 rounded-2xl border border-amber-300 text-center">
-                <span className="text-xs font-bold text-amber-900 uppercase tracking-wider block">
-                  {isBn
-                    ? 'রাসূলুল্লাহ ﷺ থেকে আদনান পর্যন্ত সর্বসম্মত প্রামাণ্য নসবনামা'
-                    : 'The Unanimous Authenticated Lineage from Muhammad ﷺ to Adnan'}
-                </span>
-                <p className="text-xs text-slate-600 mt-1">
-                  {isBn
-                    ? 'অধিকাংশ ঐতিহাসিক ও মুহাদ্দিসগণের মতে এ ২১ পুরুষের বিশুদ্ধতার ব্যাপারে কোনো সন্দেহ নেই (ইবনে হিশাম ১/১,২)।'
-                    : 'All traditional scholars agree on the pristine authenticity of these 21 generations without dispute.'}
-                </p>
+              {/* 3-Part Sub Navigation */}
+              <div className="flex flex-wrap items-center gap-1.5 p-1.5 bg-amber-200/70 rounded-2xl">
+                <button
+                  onClick={() => setLineagePart('part1')}
+                  className={`flex-1 min-w-[140px] py-2 px-3 rounded-xl font-bold text-xs transition ${
+                    lineagePart === 'part1'
+                      ? 'bg-amber-700 text-white shadow-xs'
+                      : 'text-amber-950 hover:bg-amber-300/50'
+                  }`}
+                >
+                  {isBn ? '১ম অংশ: মুহাম্মদ ﷺ থেকে আদনান' : 'Part 1: Muhammad ﷺ to Adnan'}
+                </button>
+                <button
+                  onClick={() => setLineagePart('part2')}
+                  className={`flex-1 min-w-[140px] py-2 px-3 rounded-xl font-bold text-xs transition ${
+                    lineagePart === 'part2'
+                      ? 'bg-amber-700 text-white shadow-xs'
+                      : 'text-amber-950 hover:bg-amber-300/50'
+                  }`}
+                >
+                  {isBn ? '২য় অংশ: আদনান থেকে ইবরাহীম (আ.)' : 'Part 2: Adnan to Ibrahim (AS)'}
+                </button>
+                <button
+                  onClick={() => setLineagePart('part3')}
+                  className={`flex-1 min-w-[140px] py-2 px-3 rounded-xl font-bold text-xs transition ${
+                    lineagePart === 'part3'
+                      ? 'bg-amber-700 text-white shadow-xs'
+                      : 'text-amber-950 hover:bg-amber-300/50'
+                  }`}
+                >
+                  {isBn ? '৩য় অংশ: ইবরাহীম (আ.) থেকে আদম (আ.)' : 'Part 3: Ibrahim (AS) to Adam (AS)'}
+                </button>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
-                {CHAPTER_2_DATA.lineagePart1.map((ancestor) => (
-                  <div
-                    key={ancestor.generation}
-                    className="p-3 bg-white/95 rounded-2xl border border-amber-200 shadow-xs flex flex-col justify-between hover:border-amber-400 transition"
-                  >
-                    <div>
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">
-                          {isBn ? `পুরুষ ${ancestor.generation}` : `Gen ${ancestor.generation}`}
-                        </span>
-                        <span className="text-xs font-serif text-amber-900 font-bold" dir="rtl">
-                          {ancestor.nameAr}
-                        </span>
-                      </div>
-                      <h4 className="text-sm font-bold text-amber-950 font-bengali">
-                        {isBn ? ancestor.nameBn : ancestor.nameEn}
-                      </h4>
-                      {ancestor.titleBn && (
-                        <p className="text-[11px] text-amber-700 font-medium italic mb-1">
-                          {isBn ? ancestor.titleBn : ancestor.titleEn}
-                        </p>
-                      )}
-                    </div>
-                    <p className="text-[11px] text-slate-600 leading-snug pt-2 border-t border-amber-100 mt-1">
-                      {isBn ? ancestor.significanceBn : ancestor.significanceEn}
+              {lineagePart === 'part1' && (
+                <div className="space-y-3">
+                  <div className="bg-amber-100/80 p-3.5 rounded-2xl border border-amber-300 text-center">
+                    <span className="text-xs font-bold text-amber-900 uppercase tracking-wider block">
+                      {isBn
+                        ? '১ম অংশ: মুহাম্মদ ﷺ থেকে আদনান পর্যন্ত ২১ পুরুষের সর্বসম্মত বিশুদ্ধ নসবনামা'
+                        : 'Part 1: The Unanimous Authentic 21 Generations from Muhammad ﷺ to Adnan'}
+                    </span>
+                    <p className="text-xs text-slate-600 mt-1">
+                      {isBn
+                        ? 'সকল ঐতিহাসিক ও সীরাতবিদ একমত যে এ ২১ পুরুষের বিশুদ্ধতায় কোনো সন্দেহ নেই (ইবনে হিশাম ১/১,২; তাবারী ২/২৩৯ [পাদটীকা ৮৩])।'
+                        : 'All scholars and historians unanimously agree on the pristine authenticity of these 21 generations without dispute.'}
                     </p>
                   </div>
-                ))}
-              </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
+                    {CHAPTER_2_DATA.lineagePart1.map((ancestor) => (
+                      <div
+                        key={ancestor.generation}
+                        className="p-3 bg-white/95 rounded-2xl border border-amber-200 shadow-xs flex flex-col justify-between hover:border-amber-400 transition"
+                      >
+                        <div>
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">
+                              {isBn ? `পুরুষ ${ancestor.generation}` : `Gen ${ancestor.generation}`}
+                            </span>
+                            <span className="text-xs font-serif text-amber-900 font-bold" dir="rtl">
+                              {ancestor.nameAr}
+                            </span>
+                          </div>
+                          <h4 className="text-sm font-bold text-amber-950 font-bengali">
+                            {isBn ? ancestor.nameBn : ancestor.nameEn}
+                          </h4>
+                          {ancestor.titleBn && (
+                            <p className="text-[11px] text-amber-700 font-medium italic mb-1">
+                              {isBn ? ancestor.titleBn : ancestor.titleEn}
+                            </p>
+                          )}
+                        </div>
+                        <p className="text-[11px] text-slate-600 leading-snug pt-2 border-t border-amber-100 mt-1">
+                          {isBn ? ancestor.significanceBn : ancestor.significanceEn}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {lineagePart === 'part2' && (
+                <div className="space-y-4">
+                  <div className="p-4 rounded-2xl bg-amber-100/90 border border-amber-300">
+                    <span className="text-xs font-bold text-amber-900 uppercase tracking-wider block mb-1">
+                      {isBn
+                        ? '২য় অংশ: আদনান থেকে হযরত ইবরাহীম (আ.) পর্যন্ত'
+                        : 'Part 2: From Adnan to Prophet Ibrahim (A.S.)'}
+                    </span>
+                    <p className="text-xs text-slate-700 leading-relaxed">
+                      {isBn
+                        ? CHAPTER_2_DATA.lineagePart2.scholarlyNoteBn
+                        : CHAPTER_2_DATA.lineagePart2.scholarlyNoteEn}
+                    </p>
+                  </div>
+
+                  <div className="p-5 rounded-2xl bg-white border border-amber-200 shadow-xs space-y-3">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-amber-900 flex items-center gap-1.5">
+                      <BookOpen className="w-4 h-4 text-amber-600" />
+                      <span>{isBn ? 'কিতাবে উল্লেখিত ধারাক্রম:' : 'Textual Lineage Chain in the Book:'}</span>
+                    </h4>
+                    <p className="text-xs sm:text-sm text-slate-800 font-medium leading-loose bg-amber-50/60 p-3.5 rounded-xl border border-amber-200">
+                      {isBn ? CHAPTER_2_DATA.lineagePart2.textBn : CHAPTER_2_DATA.lineagePart2.textEn}
+                    </p>
+                    <div className="pt-2 text-[11px] text-amber-800 font-medium border-t border-amber-100">
+                      <span className="font-bold">{isBn ? 'উৎস: ' : 'Sources: '}</span>
+                      <span>{isBn ? CHAPTER_2_DATA.lineagePart2.sourceBn : CHAPTER_2_DATA.lineagePart2.sourceEn}</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {lineagePart === 'part3' && (
+                <div className="space-y-4">
+                  <div className="p-4 rounded-2xl bg-amber-100/90 border border-amber-300">
+                    <span className="text-xs font-bold text-amber-900 uppercase tracking-wider block mb-1">
+                      {isBn
+                        ? '৩য় অংশ: হযরত ইবরাহীম (আ.) থেকে হযরত আদম (আ.) পর্যন্ত'
+                        : 'Part 3: From Prophet Ibrahim (A.S.) to Prophet Adam (A.S.)'}
+                    </span>
+                    <p className="text-xs text-slate-700 leading-relaxed">
+                      {isBn
+                        ? CHAPTER_2_DATA.lineagePart3.scholarlyNoteBn
+                        : CHAPTER_2_DATA.lineagePart3.scholarlyNoteEn}
+                    </p>
+                  </div>
+
+                  <div className="p-5 rounded-2xl bg-white border border-amber-200 shadow-xs space-y-3">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-amber-900 flex items-center gap-1.5">
+                      <BookOpen className="w-4 h-4 text-amber-600" />
+                      <span>{isBn ? 'কিতাবে উল্লেখিত ধারাক্রম:' : 'Textual Lineage Chain in the Book:'}</span>
+                    </h4>
+                    <p className="text-xs sm:text-sm text-slate-800 font-medium leading-loose bg-amber-50/60 p-3.5 rounded-xl border border-amber-200">
+                      {isBn ? CHAPTER_2_DATA.lineagePart3.textBn : CHAPTER_2_DATA.lineagePart3.textEn}
+                    </p>
+                    <div className="pt-2 text-[11px] text-amber-800 font-medium border-t border-amber-100">
+                      <span className="font-bold">{isBn ? 'উৎস: ' : 'Sources: '}</span>
+                      <span>{isBn ? CHAPTER_2_DATA.lineagePart3.sourceBn : CHAPTER_2_DATA.lineagePart3.sourceEn}</span>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>

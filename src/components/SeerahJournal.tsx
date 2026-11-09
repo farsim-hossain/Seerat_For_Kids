@@ -3,6 +3,7 @@
 import { X, MapPin, Award, BookMarked, Sparkles, CheckCircle2, Scroll, Heart } from 'lucide-react';
 import { LocationPoint, CHAPTER_1_DATA, CHAPTER_1_SECTION_2_DATA } from '../data/chapter1Data';
 import { CHAPTER_2_DATA } from '../data/chapter2Data';
+import { CHAPTER_2_SECTION_2_DATA } from '../data/chapter2Section2Data';
 
 export interface JournalItem {
   id: string;
@@ -37,7 +38,7 @@ export default function SeerahJournal({
   const isBn = lang === 'bn';
   const totalLocations = CHAPTER_1_DATA.locations.length + CHAPTER_1_SECTION_2_DATA.locations.length;
   const totalTribes = CHAPTER_1_DATA.tribes.length;
-  const totalChapter2Stations = CHAPTER_2_DATA.stations.length;
+  const totalChapter2Stations = CHAPTER_2_DATA.stations.length + CHAPTER_2_SECTION_2_DATA.stations.length;
 
   const totalPossible = totalLocations + totalTribes + totalChapter2Stations + 2;
   const totalEarned = discoveredLocations.length + tribesLearned.length + chapter2DiscoveredStations.length + (quizPassed ? 2 : 0);
@@ -177,10 +178,25 @@ export default function SeerahJournal({
 
           {/* Moral Lesson Cards */}
           <div className="space-y-3 mb-4">
+            <div className="bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-300 p-3.5 rounded-2xl shadow-sm">
+              <div className="text-[11px] font-bold text-emerald-800 uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                <Heart className="w-4 h-4 text-emerald-600" />
+                <span>{isBn ? 'পর্ব ২.২ এর শিক্ষা: আল-আমীন ও মাজলুমের পাশে দাঁড়ানো' : 'Part 2.2: Al-Amin & Championing Justice'}</span>
+              </div>
+              <div className="text-sm font-extrabold text-emerald-950 mb-1">
+                {isBn ? 'সততা, আমানতদারি ও হিলফুল ফুযূলের ন্যায়পরায়ণতা' : 'Trustworthiness, Integrity & Peacemaking'}
+              </div>
+              <p className="text-xs text-emerald-900 leading-relaxed">
+                {isBn
+                  ? 'হিলফুল ফুযূলের শপথ ও কাবার বিবাদ মীমাংসায় রাসূলুল্লাহ ﷺ-এর প্রজ্ঞা আমাদের শেখায় কীভাবে সব দলমত নির্বিশেষে মাজলুমের অধিকার প্রতিষ্ঠা ও রক্তপাত বন্ধে ভূমিকা রাখতে হয়।'
+                  : 'The oath of Hilf al-Fudul and the Ka’bah stone reconciliation teach us how to defend the oppressed and resolve conflicts peacefully with wisdom.'}
+              </p>
+            </div>
+
             <div className="bg-gradient-to-r from-red-50 to-orange-50 border border-orange-300 p-3.5 rounded-2xl shadow-sm">
               <div className="text-[11px] font-bold text-orange-800 uppercase tracking-wider mb-1 flex items-center gap-1.5">
                 <Heart className="w-4 h-4 text-red-600" />
-                <span>{isBn ? '২য় অধ্যায়ের শিক্ষা: আনুগত্য, প্রতিশ্রুতি ও তাকদির' : 'Ch. 2 Lesson: Obedience & Destiny'}</span>
+                <span>{isBn ? 'পর্ব ২.১ এর শিক্ষা: আনুগত্য, প্রতিশ্রুতি ও তাকদির' : 'Part 2.1: Obedience & Destiny'}</span>
               </div>
               <div className="text-sm font-extrabold text-orange-950 mb-1">
                 {isBn ? 'পিতামাতার আনুগত্য, প্রতিশ্রুতি রক্ষা ও আল্লাহর কুদরতে বিশ্বাস' : 'Filial Piety, Keeping Covenants & Trust in God'}

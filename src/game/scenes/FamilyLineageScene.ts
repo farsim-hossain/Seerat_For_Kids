@@ -341,7 +341,7 @@ export class FamilyLineageScene extends Scene {
 
     // Dig Well Button
     const digBtn = this.createActionButton(
-      w * 0.35,
+      w * 0.22,
       h * 0.58,
       '⛏️',
       currentAppLanguage === 'bn' ? 'যমযম কূপ পুনঃখনন করো' : 'Excavate Well of Zamzam',
@@ -350,7 +350,7 @@ export class FamilyLineageScene extends Scene {
 
     digBtn.on('pointerdown', () => {
       this.zamzamDug = true;
-      this.spawnWaterFountain(w * 0.35, h * 0.45);
+      this.spawnWaterFountain(w * 0.22, h * 0.45);
       EventBus.emit(GAME_EVENTS.CHAPTER2_STATION_SELECTED, 'abdul_muttalib_zamzam');
       this.updateLanguageStrings(currentAppLanguage);
     });
@@ -358,7 +358,7 @@ export class FamilyLineageScene extends Scene {
 
     // Golden Deer & Swords Button
     const treasureBtn = this.createActionButton(
-      w * 0.65,
+      w * 0.50,
       h * 0.58,
       '🦌',
       currentAppLanguage === 'bn' ? 'স্বর্ণের হরিণ ও জুরহুমদের তরবারি' : 'Golden Deer & Swords',
@@ -367,11 +367,36 @@ export class FamilyLineageScene extends Scene {
 
     treasureBtn.on('pointerdown', () => {
       this.goldenDeerFound = true;
-      this.spawnGoldSparkles(w * 0.65, h * 0.45);
+      this.spawnGoldSparkles(w * 0.50, h * 0.45);
       EventBus.emit(GAME_EVENTS.CHAPTER2_STATION_SELECTED, 'abdul_muttalib_zamzam');
       this.updateLanguageStrings(currentAppLanguage);
     });
     this.dynamicContent.add(treasureBtn);
+
+    // Desert Water Miracle Button
+    const desertTrialBtn = this.createActionButton(
+      w * 0.78,
+      h * 0.58,
+      '💧',
+      currentAppLanguage === 'bn' ? 'মরুভূমির পানির পরীক্ষা ও মুজিযা' : 'Desert Water Trial',
+      0x0ea5e9
+    );
+
+    desertTrialBtn.on('pointerdown', () => {
+      this.spawnWaterFountain(w * 0.78, h * 0.45);
+      EventBus.emit(GAME_EVENTS.CHAPTER2_STATION_SELECTED, 'abdul_muttalib_zamzam');
+      this.promptTitle?.setText(
+        currentAppLanguage === 'bn'
+          ? '💧 মরুভূমির পানির মুজিযা: কুরাইশদের আত্মসমর্পণ'
+          : '💧 Desert Water Trial: Quraysh Concedes Zamzam'
+      );
+      this.promptSubtitle?.setText(
+        currentAppLanguage === 'bn'
+          ? 'মরুভূমিতে উটের পায়ের নিচ থেকে পানি প্রবাহিত হলে কুরাইশরা আবদুল মুত্তালিবের অধিকার স্বীকার করে নেয়।'
+          : "Water gushed beneath Abdul Muttalib's camel in the barren desert, proving divine designation."
+      );
+    });
+    this.dynamicContent.add(desertTrialBtn);
   }
 
   // =========================================================================

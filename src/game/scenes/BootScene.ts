@@ -23,6 +23,10 @@ export class BootScene extends Scene {
     this.load.image('zamzam_rediscovery_ancient', 'assets/images/zamzam_rediscovery_ancient.jpg');
     this.load.image('wadi_muhassir_elephant_storm', 'assets/images/wadi_muhassir_elephant_storm.jpg');
     this.load.image('yathrib_oasis_groves', 'assets/images/yathrib_oasis_groves.jpg');
+    this.load.image('banu_sad_desert_pasture', 'assets/images/banu_sad_desert_pasture.jpg');
+    this.load.image('busra_syria_monastery', 'assets/images/busra_syria_monastery.jpg');
+    this.load.image('hilf_al_fudul_gathering_hall', 'assets/images/hilf_al_fudul_gathering_hall.jpg');
+    this.load.image('kabah_reconstruction_ancient', 'assets/images/kabah_reconstruction_ancient.jpg');
 
     // 3. Generate procedural helper textures
     this.createProceduralAssets();

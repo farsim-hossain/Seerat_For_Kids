@@ -7,6 +7,8 @@ import { MakkahJourneyScene } from './scenes/MakkahJourneyScene';
 import { IdolHistoryScene } from './scenes/IdolHistoryScene';
 import { FamilyLineageScene } from './scenes/FamilyLineageScene';
 import { ElephantArmyScene } from './scenes/ElephantArmyScene';
+import { ProphetLifeEarlyScene } from './scenes/ProphetLifeEarlyScene';
+import { YouthAndPeacemakerScene } from './scenes/YouthAndPeacemakerScene';
 
 export const createPhaserConfig = (parent: HTMLElement): Types.Core.GameConfig => ({
   type: AUTO,
@@ -34,5 +36,7 @@ export const createPhaserConfig = (parent: HTMLElement): Types.Core.GameConfig =
     IdolHistoryScene,
     FamilyLineageScene,
     ElephantArmyScene,
+    ProphetLifeEarlyScene,
+    YouthAndPeacemakerScene,
   ],
 });

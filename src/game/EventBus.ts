@@ -37,7 +37,7 @@ export const EventBus = new SimpleEventEmitter();
 
 export let currentAppLanguage: 'bn' | 'en' = 'bn';
 export let currentAppChapter: 1 | 2 = 1;
-export let currentAppSection: '1.1' | '1.2' | '1.3' | '2.1' = '1.1';
+export let currentAppSection: '1.1' | '1.2' | '1.3' | '2.1' | '2.2' = '1.1';
 
 export const setAppLanguage = (lang: 'bn' | 'en') => {
   currentAppLanguage = lang;
@@ -49,7 +49,7 @@ export const setAppChapter = (ch: 1 | 2) => {
   EventBus.emit(GAME_EVENTS.SWITCH_CHAPTER, ch);
 };
 
-export const setAppSection = (sec: '1.1' | '1.2' | '1.3' | '2.1') => {
+export const setAppSection = (sec: '1.1' | '1.2' | '1.3' | '2.1' | '2.2') => {
   currentAppSection = sec;
   EventBus.emit(GAME_EVENTS.SWITCH_SECTION, sec);
 };

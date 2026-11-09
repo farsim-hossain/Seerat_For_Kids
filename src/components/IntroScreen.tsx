@@ -166,12 +166,12 @@ export default function IntroScreen({ lang, onToggleLang, onStartJourney }: Intr
                 </div>
 
                 <h3 className="text-xl font-black text-amber-950 group-hover:text-amber-700 transition-colors">
-                  {isBn ? '২. রাসূলুল্লাহ ﷺ-এর পরিবার ও বংশ পরিচয়' : "2. Prophet Muhammad ﷺ's Family Background & Lineage"}
+                  {isBn ? '২. রাসূলুল্লাহ ﷺ-এর শুভ জন্ম, শৈশব ও যৌবন' : "2. Prophet Muhammad ﷺ's Birth, Youth & Lineage"}
                 </h3>
                 <p className="text-xs sm:text-sm text-slate-600 mt-1 max-w-lg leading-relaxed">
                   {isBn
-                    ? 'হাশিমের সারীদ ও বাণিজ্য, আবদুল মুত্তালিব ও যমযম পুনঃখনন, হস্তীবাহিনীর অলৌকিক ঘটনা (৫৭১ খ্রি.) এবং আবদুল্লাহর ১০০ উটের মুক্তিপণ।'
-                    : 'Hashim\'s hospitality, Abdul Muttalib & the Zamzam rediscovery, the miraculous Elephant Army defeat (571 CE), and Abdullah\'s 100-camel ransom.'}
+                    ? 'পরিবার ও বংশধারা, হস্তীবাহিনী, শুভ জন্ম, বনু সা\'দ মরুপ্রান্তর, হিলফুল ফুযূল শান্তিচুক্তি, সিরিয়ায় বাণিজ্য কাফেলা ও কাবার বিবাদ মীমাংসা।'
+                    : 'Lineage, Year of the Elephant, the Blessed Birth, Banu Sa\'d pastures, Hilf al-Fudul justice pact, ethical trade, and Ka\'bah peacemaking.'}
                 </p>
               </div>
             </div>
